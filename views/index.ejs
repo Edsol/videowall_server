@@ -95,19 +95,34 @@
       $(document).on('click','.open-terminal', event =>{
         var main_element = event.currentTarget.closest('.remote-client-item');
         var ip_address = main_element.dataset.ipaddress
-        console.log(main_element)
         window.open(`https://${ip_address}:4200`,"","width=1000,height=600")
       })
 
       $(document).on('click','.close-all-browser-page', event =>{
-        var main_element = event.currentTarget.closest('.remote-client-item');
-        var id = main_element.dataset.id
-        axios.get(`/closeRemoteBrowser/${id}`)
-        .then((response) =>{
-          if(response.status === 200){
-            successNotification();
+        bootbox.confirm({
+          title: "Close remote browser",
+          message: "Do you really want close all remote browser?",
+          buttons: {
+              cancel: {
+                  label: '<i class="fa fa-times"></i> Cancel'
+              },
+              confirm: {
+                  label: '<i class="fa fa-check"></i> Confirm'
+              }
+          },
+          callback: function (result) {
+            if(result){
+              var main_element = event.currentTarget.closest('.remote-client-item');
+              var id = main_element.dataset.id
+              axios.get(`/closeRemoteBrowser/${id}`)
+              .then((response) =>{
+                if(response.status === 200){
+                  successNotification();
+                }
+              })
+            }
           }
-        })
+        });
       })
 
 
