@@ -38,7 +38,7 @@
       <div class="list-client row">
         <% clients.forEach((client) => { %>
           
-          <div class="cursor-pointer border col-lg-3 col-sm-12 ml-2 p-0 row remote-client-item" "data-ip_address"="<%- client.ip %>" data-id="<%- client.id %>">
+          <div class="cursor-pointer border col-lg-3 col-sm-12 ml-2 p-0 row remote-client-item" data-ipaddress="<%- client.ip %>" data-id="<%- client.id %>">
             <div class="col-lg-6 col-sm-12  p-0">
               <img src="/images/no_image.png" class='img-fluid screen_image'>
             </div>
@@ -94,7 +94,8 @@
 
       $(document).on('click','.open-terminal', event =>{
         var main_element = event.currentTarget.closest('.remote-client-item');
-        var ip_address = main_element.dataset.ip_address
+        var ip_address = main_element.dataset.ipaddress
+        console.log(main_element)
         window.open(`https://${ip_address}:4200`,"","width=1000,height=600")
       })
 
@@ -116,7 +117,7 @@
         var row = $(".remote-client-template").clone()
         row.removeClass('d-none remote-client-template')
         .addClass('remote-client-item')
-        .attr('data-ip_address',args.ip)
+        .attr('data-ip-address',args.ip)
         .attr('data-id',args.id)
 
         row.find('.hostname').html(args.hostname);
@@ -144,7 +145,7 @@
               if (url.match(regex) === null) {
                 alert("Invalid url");
               } else {
-                sendCommand(element.dataset.id,element.dataset.ip_address,url);
+                sendCommand(element.dataset.id,element.dataset.ipaddress,url);
               }
             }
           }
@@ -179,7 +180,7 @@
       })
 
       function clientItemExists(ip){
-        var count = $(`[data-ip_address="${ip}"]`).length;
+        var count = $(`[data-ipaddress="${ip}"]`).length;
         return count === 0 ? false : true;
       }
 
