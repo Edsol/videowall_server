@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PiWall Controller</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/bootstrap/bootstrap.css' />
+    <script src="/jquery/jquery.js"></script>
+    <script src="/bootstrap/bootstrap.js"></script>
+    <script src="/axios/axios.js"></script>
+    <script src="/redom/redom.js"></script>
+    <script src="/bootbox/bootbox.all.min.js"></script>
+
+    <script src="/fontawesome/all.min.js"></script>
+    <link rel='stylesheet' href='/fontawesome/all.min.css' />
+
+    <script src="/awesome-notifications/index.var.js"></script>
+    <link rel='stylesheet' href='/awesome-notifications/style.css' />
+
+    <script src="/viewerjs/viewer.min.js"></script>
+    <link rel='stylesheet' href='/viewerjs/viewer.min.css' />
+    <script>
+      const { el, mount } = redom;
+
+      let globalOptions =  {}
+      let notifier = new AWN(globalOptions);
+    </script>
+  </head>
+  <body>
+    <div>
+
+      <button id='find_client' class="btn btn-primary" type="button">
+        <span class="spinner-border spinner-border-sm spinner-find-client d-none" role="status" aria-hidden="true"></span>
+        Cerca
+      </button>
+
+      <hr>
+
+      <div class="list-client row">
+        <div class="cursor-pointer border col-lg-3 col-sm-12 ml-2 p-0 row remote-client-template d-none">
+          <div class="col-lg-6 col-sm-12  p-0">
+            <img src="/images/no_image.png" class='img-fluid screen_image'>
+          </div>
+          <div class="col-lg-6 col-sm-12">
+            <h3 class="mb-1 font-weight-bold hostname"></h3>
+            <small class="text-mute">
+              <span class="p-2 font-weight-bold ip_address"></span>
+              <span class="mac_address"></span>
+            </small>
+            <i class="fas fa-paper-plane cursor-pointer send-url" title="open page in remote browser"></i>
+            <i class="fas fa-camera cursor-pointer update-screenshot" title="take a screenshot"></i>
+            <i class="fas fa-window-close cursor-pointer close-all-browser-page" title="close all remote browser page"></i>
+            <i class="fas fa-terminal cursor-pointer open-terminal" title="open ssh connection"></i>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <script>
+      var test = 0;
+      var regex = new RegExp(/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi);
+
+      $(document).on('click','.update-screenshot', event =>{
+        var main_element = event.currentTarget.closest('.remote-client-item');
+        var id = main_element.dataset.id
+        axios.get(`/getScreenshot/${id}`)
+        .then((response) =>{
+          console.log('base64',$(main_element))
+          var image_element = $(main_element).find('.screen_image');
+          image_element.attr('src',"data:image/png;base64,"+response.data);
+        })
+      })
+
+      $(document).on('click','.open-terminal', event =>{
+        var main_element = event.currentTarget.closest('.remote-client-item');
+        var ip_address = main_element.dataset.ip_address
+        window.open(`https://${ip_address}:4200`,"","width=1000,height=600")
+      })
+
+      $(document).on('click','.close-all-browser-page', event =>{
+        var main_element = event.currentTarget.closest('.remote-client-item');
+        var id = main_element.dataset.id
+        axios.get(`/closeRemoteBrowser/${id}`)
+        .then((response) =>{
+          if(response.status === 200){
+            successNotification();
+          }
+        })
+      })
+
+
+     
+
+      function newClientRow(args){
+        var row = $(".remote-client-template").clone()
+        row.removeClass('d-none remote-client-template')
+        .addClass('remote-client-item')
+        .attr('data-ip_address',args.ip)
+        .attr('data-id',args.id)
+
+        row.find('.hostname').html(args.hostname);
+    
+        row.find('.ip_address').html(args.ip);
+        row.find('.mac_address').html(`(${args.mac})`);
+
+        viewer = new Viewer(row.find('.screen_image').get(0), {
+          modal: true,
+          backdrop: true,
+          viewed() {},
+        });
+        $('.list-client').append(row)       
+      }
+
+
+
+      $(document).on('click','.send-url',event => {
+        var element = event.currentTarget.closest('.remote-client-item');
+        bootbox.prompt({
+          title: "Specify the url", 
+          centerVertical: true,
+          callback: function(url){
+            if(url){
+              if (url.match(regex) === null) {
+                alert("Invalid url");
+              } else {
+                sendCommand(element.dataset.id,element.dataset.ip_address,url);
+              }
+            }
+          }
+        });
+      })
+
+      function sendCommand(id,ip,url){
+       var post_data = {
+        id: id,
+        ip_address:ip,
+        url:url
+       };
+       notifier.asyncBlock(
+        axios.post('/remoteCommand',post_data),
+        resp => notifier.success(`${resp.data.length} posts has been loaded`),
+      );
+      }
+
+      $('#find_client').on('click',(event) =>{
+        disableFindButton(true);
+        
+        axios.get('/ipList/'+test)
+        .then((response) =>{
+          disableFindButton(false);
+          for(const element of response.data){
+            if(clientItemExists(element.ip) === false){
+              newClientRow(element)
+            }
+            
+          }
+        })
+      })
+
+      function clientItemExists(ip){
+        var count = $(`[data-ip_address="${ip}"]`).length;
+        return count === 0 ? false : true;
+      }
+
+      function disableFindButton(status){
+        if(status){
+          $('.spinner-find-client').removeClass('d-none');
+          $('#find_client').attr('disabled','disabled')
+        }else{
+          $('.spinner-find-client').addClass('d-none');
+          $('#find_client').removeAttr('disabled')
+        }
+      }
+
+      function successNotification(message){
+        new AWN().success(message)
+      }
+    </script>
+
+    <style>
+      .cursor-pointer{
+        cursor: pointer;
+      }
+      .screen_image{
+        min-width: 200px;
+      }
+    </style>
+    
+  </body>
+</html>
