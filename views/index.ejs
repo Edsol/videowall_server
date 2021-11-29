@@ -89,6 +89,7 @@
         .then((response) =>{
           var image_element = $(main_element).find('.screen_image');
           image_element.attr('src',"data:image/png;base64,"+response.data);
+          addImageViewer(image_element.get(0));
         })
       })
 
@@ -140,11 +141,7 @@
         row.find('.ip_address').html(args.ip);
         row.find('.mac_address').html(`(${args.mac})`);
 
-        viewer = new Viewer(row.find('.screen_image').get(0), {
-          modal: true,
-          backdrop: true,
-          viewed() {},
-        });
+        addImageViewer(row.find('.screen_image').get(0));
         $('.list-client').append(row)       
       }
 
@@ -207,6 +204,14 @@
           $('.spinner-find-client').addClass('d-none');
           $('#find_client').removeAttr('disabled')
         }
+      }
+
+      function addImageViewer(element){
+        new Viewer(element, {
+          modal: true,
+          backdrop: true,
+          viewed() {},
+        });
       }
 
       function successNotification(message){
