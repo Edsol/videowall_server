@@ -1,117 +1,117 @@
 const nmap = require('node-nmap');
-const PiClient = require("../models/client");
+const Client = require('../models/client');
+
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient();
+
 
 class ClientManager {
-	test_list = [
-		new PiClient({
-			id: (Math.random() + 1).toString(36).substring(2),
-			hostname: 'raspi',
-			ip: '192.168.1.28',
-			mac: 'DC:A6:32:C9:5F:8A',
-		})
-	];
-
-
 	client_list = {};
+
+	Client = new Client();
 
 	/**
 	 */
 	constructor() { }
 
 	/**
-	 * @param  {} data
 	 */
-	async parseFindResult(data) {
-		return new Promise(async (resolve, reject) => {
-			var list = [];
-			for (const element of data) {
-				if (element.vendor === 'Raspberry Pi Trading') {
-					var pi_client = new PiClient(element)
-					pi_client = await pi_client.init();
-					list.push(pi_client)
-				}
-			}
-			resolve(list)
-		})
-	}
-
-	/**
-	 * @param  {} all=false
-	 */
-	async find(test = false, all = false) {
+	async networkScan(network_class) {
+		if (network_class === undefined) {
+			return [];
+		}
 		var that = this;
 		return new Promise(async (resolve, reject) => {
-			if (test) {
-				// var parsed_data = await that.parseFindResult(this.test_list);
-				resolve(this.test_list)
-			} else {
-				nmap.nmapLocation = 'nmap';
-				var nmapscan = new nmap.NmapScan('192.168.1.0/24', '-sPCV');
+			nmap.nmapLocation = 'nmap';
+			var nmapscan = new nmap.NmapScan(network_class, '-sPCV');
 
-				nmapscan.on('complete', async function (data) {
-					console.log(data)
-					if (all === true) {
-						resolve(data);
+			nmapscan.on('complete', async function (data) {
+				var list = [];
+				for (const element of data) {
+					if (element.vendor === 'Raspberry Pi Trading' || element.vendor === 'Raspberry Pi Foundation') {
+
+						var pi_client = new Client(element)
+						pi_client = await pi_client.init();
+						list.push(pi_client)
 					}
+				}
+				resolve(list)
+			});
+			nmapscan.on('error', function (error) {
+				reject(error)
+			});
 
-					var parsed_data = await that.parseFindResult(data);
-					resolve(parsed_data)
-				});
-				nmapscan.on('error', function (error) {
-					reject(error)
-				});
-
-				nmapscan.startScan();
-			}
-
+			nmapscan.startScan();
 		})
 	}
 
-	/**
-	 */
-	async getClientList(test) {
-		var list = await this.find(test);
+	async findNewClient(network_class = '192.168.1.0') {
+		var list = await this.networkScan(network_class + "/24");
+
 		for (const element of list) {
-			this.client_list[element.id] = element;
+			if (await this.Client.exists({ mac: element.mac })) {
+				var existing_client = await prisma.client.findFirst({
+					where: {
+						mac: element.mac
+					}
+				});
+				await this.Client.updateByMac(existing_client.id, {
+					hostname: element.hostname,
+					ip: element.ip
+				});
+			} else {
+				await this.Client.create(element);
+			}
 		}
 		return list;
 	}
 
-	getClient(id) {
-		return this.client_list[id];
+	/**
+	 */
+	async getClientList() {
+		return this.Client.getList();
 	}
 
-	async remoteCommand(args) {
-		var pi_client = this.getClient(args.id);
-		if (pi_client) {
-			pi_client.openUrl(args.url);
-			return true;
-		} else if (args.ip_address !== undefined) {
-			var pi_client = new PiClient();
-			pi_client.openUrl(args.url, args.ip_address)
-			return true;
-		} else {
-			return false;
-		}
+	async get(id) {
+		var client = await this.Client.get(id);
+		return new Client(client);
 	}
 
-	async getScreenshot(id) {
-		var pi_client = this.getClient(id);
-		if (pi_client === undefined) {
-			return false;
-		}
-		return await pi_client.getScreenshot();
-	}
+	// getClient(id) {
+	// 	return this.client_list[id];
+	// }
 
-	async closeAllRemoteBrowser(id) {
-		var pi_client = this.getClient(id);
-		console.log(id, pi_client)
-		if (pi_client === undefined) {
-			return false;
-		}
+	// async remoteCommand(args) {
+	// 	var pi_client = this.getClient(args.id);
+	// 	if (pi_client) {
+	// 		pi_client.openUrl(args.url);
+	// 		return true;
+	// 	} else if (args.ip_address !== undefined) {
+	// 		var pi_client = new Client();
+	// 		pi_client.openUrl(args.url, args.ip_address)
+	// 		return true;
+	// 	} else {
+	// 		return false;
+	// 	}
+	// }
 
-		return await pi_client.closeAllBrowser();
-	}
+	// async getScreenshot(id) {
+	// 	var pi_client = this.getClient(id);
+	// 	if (pi_client === undefined) {
+	// 		return false;
+	// 	}
+	// 	return await pi_client.getScreenshot();
+	// }
+
+	// async closeAllRemoteBrowser(id) {
+	// 	var pi_client = this.getClient(id);
+	// 	console.log(id, pi_client)
+	// 	if (pi_client === undefined) {
+	// 		return false;
+	// 	}
+
+	// 	return await pi_client.closeAllBrowser();
+	// }
 
 }
 

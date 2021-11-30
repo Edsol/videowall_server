@@ -1,34 +1,21 @@
 var express = require('express');
 var router = express.Router();
-const ClientManager = require("./clientManager");
-const Client = require('../models/client.js');
 
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient()
-
-var clientManager = new ClientManager();
-
-async function getClient(id) {
-  var client = await prisma.client.findUnique({
-    where: {
-      id: parseInt(id)
-    }
-  });
-
-  return new Client(client);
-}
+const clientManager = require("./clientManager");
+var ClientManager = new clientManager();
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
-  const clients = await prisma.client.findMany()
-  res.render('index', { clients: clients });
+  const clients = await ClientManager.getClientList();
+  res.render('index/index', { clients: clients });
 });
 
 /*
 * open page in remote browser
 */
 router.post('/openUrl', async function (req, res, next) {
-  var client = await getClient(req.body.id);
+  console.log(req.body)
+  var client = await ClientManager.get(req.body.id);
   var response = client.openUrl(req.body.url, client.ip_address)
   res.json(response)
 })
@@ -37,25 +24,24 @@ router.post('/openUrl', async function (req, res, next) {
 * take screenshot of remote client screen
 */
 router.get('/getScreenshot/:id', async function (req, res, next) {
-  var client = await getClient(req.params.id);
-  var result = await client.getScreenshot();
-  res.json(result);
+  var client = await ClientManager.get(req.params.id);
+  res.json(await client.getScreenshot());
 });
 
 /*
 * close all browser windows to remote client
 */
 router.get('/closeRemoteBrowser/:id', async function (req, res, next) {
-  var client = await getClient(req.params.id);
-  const response = await client.closeAllBrowser();
-  res.json(response)
+  var client = await ClientManager.get(req.params.id);
+  res.json(await client.closeAllBrowser())
 });
 
+router.get('/listClient', async function (req, res, next) {
+  res.json(await ClientManager.getClientList());
+});
 
-router.get('/ipList/:test', async function (req, res, next) {
-  var test = JSON.parse(req.params.test)
-  var list = await clientManager.getClientList(test);
-  res.json(list);
+router.get('/findNewClient', async function (req, res, next) {
+  res.json(await ClientManager.findNewClient());
 });
 
 module.exports = router;

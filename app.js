@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
+var bookmarkRouter = require('./routes/bookmark');
 
 var app = express();
 
@@ -31,6 +32,7 @@ app.use('/awesome-notifications', express.static(__dirname + '/node_modules/awes
 app.use('/viewerjs', express.static(__dirname + '/node_modules/viewerjs/dist'))
 
 app.use('/', indexRouter);
+app.use('/bookmark', bookmarkRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

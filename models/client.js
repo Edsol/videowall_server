@@ -1,4 +1,6 @@
 const axios = require('axios');
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient();
 
 class Client {
 	#port = 3000;
@@ -11,8 +13,46 @@ class Client {
 		if (args) {
 			this.ip = args.ip
 			this.mac = args.mac
-			this.id = (Math.random() + 1).toString(36).substring(2);
 		}
+	}
+
+	async getList() {
+		return await prisma.client.findMany()
+	}
+
+	async get(id) {
+		return await prisma.client.findFirst({
+			where: {
+				id: parseInt(id)
+			}
+		});
+	}
+
+	async exists(args = {}) {
+		var count = await prisma.client.count({
+			where: args
+		})
+
+		return count === 0 ? false : true;
+	}
+
+	async create(args) {
+		return await prisma.client.create({
+			data: {
+				hostname: args.hostname,
+				ip: args.ip,
+				mac: args.mac
+			}
+		})
+	}
+
+	async updateByMac(id, data) {
+		return await prisma.client.update({
+			where: {
+				id: id
+			},
+			data: data
+		});
 	}
 
 	/**
@@ -23,6 +63,16 @@ class Client {
 		// xrandr --listmonitors estrae la lista di uscite monitor disponibili
 
 		return this
+	}
+
+	async getClient(id) {
+		var client = await prisma.client.findUnique({
+			where: {
+				id: parseInt(id)
+			}
+		});
+
+		return new Client(client);
 	}
 	/**
 	 * @param  {} action
