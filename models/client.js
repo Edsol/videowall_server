@@ -130,6 +130,10 @@ class Client {
 		return await this.doRequest('closeBrowser')
 	}
 
+	async reboot() {
+		return await this.doRequest('reboot');
+	}
+
 }
 
 module.exports = Client

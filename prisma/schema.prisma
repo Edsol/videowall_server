@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,8 +8,24 @@ datasource db {
 }
 
 model Client {
-  id       Int     @id @default(autoincrement())
-  ip       String
-  mac      String
-  hostname String?
+  id               Int                @id @default(autoincrement())
+  ip               String
+  mac              String
+  hostname         String?
+  BookmarksClients BookmarksClients[]
+}
+
+model Bookmark {
+  id               Int                @id @default(autoincrement())
+  url              String
+  BookmarksClients BookmarksClients[]
+}
+
+model BookmarksClients {
+  client     Client   @relation(fields: [clientId], references: [id])
+  clientId   Int
+  bookmark   Bookmark @relation(fields: [bookmarkId], references: [id])
+  bookmarkId Int
+
+  @@id([clientId, bookmarkId])
 }

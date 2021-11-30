@@ -1,5 +1,5 @@
 const nmap = require('node-nmap');
-const Client = require('../models/client');
+const ClientModel = require('../models/client');
 
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient();
@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 class ClientManager {
 	client_list = {};
 
-	Client = new Client();
+	ClientModel = new ClientModel();
 
 	/**
 	 */
@@ -49,18 +49,18 @@ class ClientManager {
 		var list = await this.networkScan(network_class + "/24");
 
 		for (const element of list) {
-			if (await this.Client.exists({ mac: element.mac })) {
+			if (await this.ClientModel.exists({ mac: element.mac })) {
 				var existing_client = await prisma.client.findFirst({
 					where: {
 						mac: element.mac
 					}
 				});
-				await this.Client.updateByMac(existing_client.id, {
+				await this.ClientModel.updateByMac(existing_client.id, {
 					hostname: element.hostname,
 					ip: element.ip
 				});
 			} else {
-				await this.Client.create(element);
+				await this.ClientModel.create(element);
 			}
 		}
 		return list;
@@ -69,12 +69,12 @@ class ClientManager {
 	/**
 	 */
 	async getClientList() {
-		return this.Client.getList();
+		return this.ClientModel.getList();
 	}
 
 	async get(id) {
-		var client = await this.Client.get(id);
-		return new Client(client);
+		var client = await this.ClientModel.get(id);
+		return new ClientModel(client);
 	}
 
 	// getClient(id) {

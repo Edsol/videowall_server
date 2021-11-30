@@ -7,6 +7,7 @@ var ClientManager = new clientManager();
 /* GET home page. */
 router.get('/', async function (req, res, next) {
   const clients = await ClientManager.getClientList();
+  console.log(clients[0].BookmarksClients)
   res.render('index/index', { clients: clients });
 });
 
@@ -26,6 +27,14 @@ router.post('/openUrl', async function (req, res, next) {
 router.get('/getScreenshot/:id', async function (req, res, next) {
   var client = await ClientManager.get(req.params.id);
   res.json(await client.getScreenshot());
+});
+
+/*
+* reboot remote edvice
+*/
+router.get('/reboot/:id', async function (req, res, next) {
+  var client = await ClientManager.get(req.params.id);
+  res.json(await client.reboot());
 });
 
 /*

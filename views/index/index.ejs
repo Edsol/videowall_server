@@ -29,6 +29,7 @@
                   <i class="fas fa-camera cursor-pointer update-screenshot" title="take a screenshot"></i>
                   <i class="fas fa-window-close cursor-pointer close-all-browser-page" title="close all remote browser page"></i>
                   <i class="fas fa-terminal cursor-pointer open-terminal" title="open ssh connection"></i>
+                  <i class="fas fa-power-off cursor-pointer reboot-remote-device" title="reboot remote device"></i>
                 </div>
               </div>
             </div>
@@ -67,10 +68,13 @@
         })
       })
 
-      $(document).on('click','.open-terminal', event =>{
+      $(document).on('click','.reboot-remote-device', event =>{
         var main_element = event.currentTarget.closest('.remote-client-item');
-        var ip_address = main_element.dataset.ipaddress
-        window.open(`https://${ip_address}:4200`,"","width=1000,height=600")
+        var id = main_element.dataset.id
+        notifier.asyncBlock(
+          axios.get(`/reboot/${id}`),
+          resp => notifier.success(`the remote device has been rebooted`),
+        );
       })
 
       $(document).on('click','.close-all-browser-page', event =>{
