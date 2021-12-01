@@ -16,11 +16,11 @@ class Client {
 		}
 	}
 
-	async getList() {
+	static async getList() {
 		return await prisma.client.findMany()
 	}
 
-	async get(id) {
+	static async get(id) {
 		return await prisma.client.findFirst({
 			where: {
 				id: parseInt(id)
@@ -28,7 +28,7 @@ class Client {
 		});
 	}
 
-	async exists(args = {}) {
+	static async exists(args = {}) {
 		var count = await prisma.client.count({
 			where: args
 		})
@@ -36,12 +36,13 @@ class Client {
 		return count === 0 ? false : true;
 	}
 
-	async create(args) {
+	static async create(args) {
 		return await prisma.client.create({
 			data: {
 				hostname: args.hostname,
 				ip: args.ip,
-				mac: args.mac
+				mac: args.mac,
+				alias: ""
 			}
 		})
 	}
@@ -81,16 +82,22 @@ class Client {
 	 */
 	async doRequest(action, type = 'GET', args = {}) {
 		var base_url = `http://${this.ip}:${this.#port}`;
+		var url = base_url + '/' + action;
 		if (type = 'GET') {
-			return axios.get(base_url + '/' + action)
+			return axios.get(url, { timeout: 5000 })
 				.then(response => {
 					return response.data
+				}).catch(error => {
+					console.log('doRequest axios error', error.code)
+					return error.code
 				})
 		}
 		if (type = 'POST') {
 			return axios.post(base_url + '/' + action, args)
 				.then(response => {
 					return response.data
+				}).catch(error => {
+					return error.code
 				})
 		}
 
@@ -98,12 +105,14 @@ class Client {
 	/**
 	 */
 	async getHostname() {
-		return await this.doRequest('hostname');
+		var hostname = await this.doRequest('hostname');
+		return hostname !== 'ECONNABORTED' ? hostname : '';
 	}
 	/**
 	 */
 	async getStatus() {
-		return await this.doRequest('status');
+		var status = await this.doRequest('status');
+		return status !== 'ECONNABORTED' ? status : '';
 	}
 	/**
 	 * @param  {} url

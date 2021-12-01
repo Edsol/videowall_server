@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-const base64 = require('node-base64-image');
 
 const clientManager = require("./clientManager");
 var ClientManager = new clientManager();
@@ -8,6 +7,9 @@ var ClientManager = new clientManager();
 /* GET home page. */
 router.get('/', async function (req, res, next) {
   const clients = await ClientManager.getClientList();
+  for (var client of clients) {
+    console.log(client)
+  }
   res.render('index/index', { clients: clients });
 });
 
@@ -15,7 +17,6 @@ router.get('/', async function (req, res, next) {
 * open page in remote browser
 */
 router.post('/openUrl', async function (req, res, next) {
-  console.log(req.body)
   var client = await ClientManager.get(req.body.id);
   var response = client.openUrl(req.body.url, client.ip_address)
   res.json(response)

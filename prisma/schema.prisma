@@ -10,14 +10,16 @@ datasource db {
 model Client {
   id               Int                @id @default(autoincrement())
   ip               String
-  mac              String
-  hostname         String?
+  mac              String?            @unique
+  hostname         String?            @unique
+  alias            String             @default("")
+  screenshotPath   String             @default("")
   BookmarksClients BookmarksClients[]
 }
 
 model Bookmark {
   id               Int                @id @default(autoincrement())
-  url              String
+  url              String?
   BookmarksClients BookmarksClients[]
 }
 

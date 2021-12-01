@@ -122,7 +122,7 @@
         row.find('.mac_address').html(`(${args.mac})`);
 
         addImageViewer(row.find('.screen_image').get(0));
-        $('.list-client').append(row)       
+        $('.list-client').children('.row').append(row)       
       }
 
 
@@ -192,6 +192,18 @@
 
       function successNotification(message){
         new AWN().success(message)
+      }
+
+      function imageExists(filename){
+        console.log('filename',filename)
+        fetch('https://i1.wp.com/www.giacomocusano.com/wp-content/uploads/2016/07/coastal-wash-web.jpg?resize=1024%2C675&ssl=1', { method: 'HEAD' })
+        .then(res => {
+            if (res.ok) {
+                console.log('Image exists.');
+            } else {
+                console.log('Image does not exist.');
+            }
+        }).catch(err => console.log('Error:', err));
       }
     </script>
 
