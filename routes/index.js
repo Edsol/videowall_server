@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const base64 = require('node-base64-image');
 
 const clientManager = require("./clientManager");
 var ClientManager = new clientManager();
@@ -7,7 +8,6 @@ var ClientManager = new clientManager();
 /* GET home page. */
 router.get('/', async function (req, res, next) {
   const clients = await ClientManager.getClientList();
-  console.log(clients[0].BookmarksClients)
   res.render('index/index', { clients: clients });
 });
 
@@ -26,7 +26,19 @@ router.post('/openUrl', async function (req, res, next) {
 */
 router.get('/getScreenshot/:id', async function (req, res, next) {
   var client = await ClientManager.get(req.params.id);
-  res.json(await client.getScreenshot());
+
+  var base64_image = await client.getScreenshot();
+  var base64Data = base64_image.replace(/^data:image\/png;base64,/, "");
+
+  var file_name = client.mac.replace(/:/g, '_') + ".png";
+
+  require("fs").writeFile("./tmp/" + file_name, base64Data, 'base64', function (err) {
+    if (err) {
+      console.log('error while saving the image', err);
+    }
+  });
+
+  res.json(base64_image);
 });
 
 /*

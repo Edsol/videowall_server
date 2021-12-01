@@ -122,8 +122,8 @@ class Client {
 			})
 	}
 
-	async getScreenshot() {
-		return await this.doRequest('screenshot/1');
+	async getScreenshot(base64 = true) {
+		return await this.doRequest('screenshot/' + base64);
 	}
 
 	async closeAllBrowser() {

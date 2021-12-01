@@ -7,8 +7,6 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var bookmarkRouter = require('./routes/bookmark');
 
-var breadcrumb = require('express-url-breadcrumb');
-
 var app = express();
 
 // view engine setup
@@ -35,13 +33,6 @@ app.use('/viewerjs', express.static(__dirname + '/node_modules/viewerjs/dist'))
 
 app.use('/', indexRouter);
 app.use('/bookmark', bookmarkRouter);
-
-// app.use(breadcrumb());
-app.use('/', breadcrumb(function (item, index) {
-  // convert each breadcrumb label to upper case
-  console.log('breadcrumb', item)
-  item.label = item.label.toUpperCase();
-}));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

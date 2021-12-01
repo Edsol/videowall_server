@@ -23,6 +23,7 @@
     "jquery": "^3.6.0",
     "marko": "^5.17.5",
     "morgan": "~1.9.1",
+    "node-base64-image": "^2.0.3",
     "node-nmap": "^4.0.0",
     "prisma": "^3.5.0",
     "redom": "^3.27.1",
