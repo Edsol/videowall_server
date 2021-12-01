@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <%- include('../template/header',{title: 'PiWall bookmark'})%> 
+  <body>
+    <button type="submit" class='btn btn-sm btn-primary' onclick="$('#form').submit()">Save</button>
+    <hr>
+		<% if(typeof saved !== 'undefined'){ %>
+			<h4 class='bg-success text-white'>Bookmark was saved</h4>
+		<%}%> 
+		<%- typeof errors == 'undefined' ? '' : errors.url.msg %> 
+    	<form id='form' method="POST">
+			<div class="form-group">
+				<label for="exampleInputEmail1">Url</label>
+				<input type="text" class="form-control" id="url" name="url" placeholder="Enter url" required>
+			</div>
+		</form>
+  </body>
+</html>

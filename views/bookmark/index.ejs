@@ -2,6 +2,25 @@
 <html>
   <%- include('../template/header',{title: 'PiWall bookmark'})%> 
   <body>
-    
+    <a class='btn btn-sm btn-primary' href="bookmark/add">Add</a>
+    <hr>
+    <h4>Bookmark list</h4>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Url</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% bookmarks.forEach((bookmark,index) => { %>
+          <tr>
+            <td scope="row"><%- bookmark.id %></td>
+            <td><%- bookmark.url %> </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
   </body>
 </html>

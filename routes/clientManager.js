@@ -30,7 +30,7 @@ class ClientManager {
 				for (const element of data) {
 					if (element.vendor === 'Raspberry Pi Trading' || element.vendor === 'Raspberry Pi Foundation') {
 
-						var pi_client = new Client(element)
+						var pi_client = new ClientModel(element)
 						pi_client = await pi_client.init();
 						list.push(pi_client)
 					}
