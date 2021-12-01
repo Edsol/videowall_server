@@ -11,6 +11,7 @@ class Client {
 
 	constructor(args) {
 		if (args) {
+			this.id = args.id
 			this.ip = args.ip
 			this.mac = args.mac
 		}
@@ -21,11 +22,13 @@ class Client {
 	}
 
 	static async get(id) {
-		return await prisma.client.findFirst({
+		var client = await prisma.client.findFirst({
 			where: {
 				id: parseInt(id)
 			}
 		});
+
+		return new Client(client)
 	}
 
 	static async exists(args = {}) {
@@ -53,6 +56,18 @@ class Client {
 				id: id
 			},
 			data: data
+		});
+	}
+
+	async setField(id, field, value) {
+		console.log(id)
+		return await prisma.client.update({
+			where: {
+				id: parseInt(id)
+			},
+			data: {
+				[field]: value
+			}
 		});
 	}
 

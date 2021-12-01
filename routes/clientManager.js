@@ -18,7 +18,6 @@ class ClientManager {
 			return [];
 		}
 		return new Promise(async (resolve, reject) => {
-			// var nmapscan = new nmap.NmapScan(network_class, '-sPCV');
 			var nmapscan = new nmap.QuickScan(network_class);
 			nmapscan.on('complete', async function (data) {
 				var list = [];
@@ -42,7 +41,6 @@ class ClientManager {
 
 	async findNewClient(network_class = '192.168.1.0') {
 		var list = await this.networkScan(network_class + "/24");
-		console.log(list)
 		for (const element of list) {
 			if (await ClientModel.exists({ mac: element.mac })) {
 				var existing_client = await prisma.client.findFirst({
@@ -69,8 +67,7 @@ class ClientManager {
 	}
 
 	async get(id) {
-		var client = await ClientModel.get(id);
-		return new ClientModel(client);
+		return await ClientModel.get(id);
 	}
 }
 

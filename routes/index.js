@@ -27,15 +27,15 @@ router.post('/openUrl', async function (req, res, next) {
 */
 router.get('/getScreenshot/:id', async function (req, res, next) {
   var client = await ClientManager.get(req.params.id);
-
   var base64_image = await client.getScreenshot();
   var base64Data = base64_image.replace(/^data:image\/png;base64,/, "");
 
-  var file_name = client.mac.replace(/:/g, '_') + ".png";
-
-  require("fs").writeFile("./tmp/" + file_name, base64Data, 'base64', function (err) {
+  var file_path = "screenshot/" + client.mac.replace(/:/g, '_') + ".png";
+  require("fs").writeFile('./public/' + file_path, base64Data, 'base64', function (err) {
     if (err) {
       console.log('error while saving the image', err);
+    } else {
+      client.setField(client.id, 'screenshotPath', file_path)
     }
   });
 
