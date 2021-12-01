@@ -14,6 +14,7 @@
     "bootbox": "^5.5.2",
     "bootstrap": "^5.1.3",
     "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
     "debug": "~2.6.9",
     "ejs": "~2.6.1",
     "express": "^4.17.1",

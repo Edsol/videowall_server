@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var cors = require('cors')
 
 var indexRouter = require('./routes/index');
 var bookmarkRouter = require('./routes/bookmark');
@@ -19,7 +20,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//Custom static file
+//Custom
+app.use(cors())
+
 app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist'))
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist/css'))
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist/js'))

@@ -50,7 +50,7 @@ class Client {
 		})
 	}
 
-	async updateByMac(id, data) {
+	static async updateByMac(id, data) {
 		return await prisma.client.update({
 			where: {
 				id: id
@@ -156,6 +156,11 @@ class Client {
 
 	async reboot() {
 		return await this.doRequest('reboot');
+	}
+
+	async showOsd(text) {
+		console.log(text)
+		return await this.doRequest('osd/' + text)
 	}
 
 }

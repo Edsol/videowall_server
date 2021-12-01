@@ -31,6 +31,7 @@
                     <i class="fas fa-window-close cursor-pointer close-all-browser-page" title="close all remote browser page"></i>
                     <i class="fas fa-terminal cursor-pointer open-terminal" title="open ssh connection"></i>
                     <i class="fas fa-power-off cursor-pointer reboot-remote-device" title="reboot remote device"></i>
+                    <i class="fas fa-fingerprint cursor-pointer show-osd-number" title="show display number"></i>
                   </div>
                 </div>
               </div>
@@ -106,6 +107,16 @@
         });
       })
 
+      $(document).on('click','.show-osd-number',event =>{
+        var main_element = event.currentTarget.closest('.remote-client-item');
+        var id = main_element.dataset.id
+        console.log(id)
+        notifier.asyncBlock(
+          axios.get(`/osd/${id}`),
+          resp => notifier.success(),
+        );
+      })
+
 
      
 
@@ -153,8 +164,7 @@
 
       $('#find_client').on('click',(event) =>{
         disableFindButton(true);
-        
-        axios.get('/findNewClient/')
+        axios.get('/findNewClient')
         .then((response) =>{
           console.log(response.data);
           disableFindButton(false);
