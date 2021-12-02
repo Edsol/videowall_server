@@ -163,6 +163,10 @@ class Client {
 		return await this.doRequest('osd/' + text)
 	}
 
+	async getConfig() {
+		return await this.doRequest('getConfig');
+	}
+
 }
 
 module.exports = Client

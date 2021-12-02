@@ -33,6 +33,7 @@ app.use('/redom', express.static(__dirname + '/node_modules/redom/dist'))
 app.use('/bootbox', express.static(__dirname + '/node_modules/bootbox/dist'))
 app.use('/awesome-notifications', express.static(__dirname + '/node_modules/awesome-notifications/dist'))
 app.use('/viewerjs', express.static(__dirname + '/node_modules/viewerjs/dist'))
+app.use('/jsonviewer', express.static(__dirname + '/node_modules/jquery.json-viewer/json-viewer'))
 
 app.use('/', indexRouter);
 app.use('/bookmark', bookmarkRouter);

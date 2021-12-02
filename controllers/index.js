@@ -3,6 +3,7 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient();
 
 const ClientModel = require('../models/client');
+const BookmarkModel = require('../models/bookmark');
 
 
 // exports.getClients = async (req, res) => {
@@ -10,9 +11,14 @@ const ClientModel = require('../models/client');
 //     res.json(list);
 // }
 
-exports.showClients = async (req, res) => {
+exports.index = async (req, res) => {
     var clients = await ClientModel.getList();
-    res.render('index/index', { clients: clients });
+    var bookmarks = await BookmarkModel.getList();
+    console.log(bookmarks)
+    res.render('index/index', {
+        clients: clients,
+        bookmarks: bookmarks
+    });
 }
 
 /*
@@ -116,4 +122,9 @@ exports.networkScan = async (req, res) => {
 exports.osd = async (req, res) => {
     var client = await ClientModel.get(req.params.id);
     res.json(await client.showOsd('TEST'));
+}
+
+exports.getConfig = async (req, res) => {
+    var client = await ClientModel.get(req.params.id);
+    res.json(await client.getConfig());
 }
