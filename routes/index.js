@@ -16,4 +16,6 @@ router.get('/findNewClient', index_controller.findNewClient);
 router.get('/osd/:id', index_controller.osd);
 router.get('/getConfig/:id', index_controller.getConfig)
 
+router.get('/displayNumber/:number', index_controller.displayNumber)
+
 module.exports = router;

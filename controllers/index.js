@@ -46,7 +46,7 @@ exports.getScreenshot = async (req, res) => {
     var client = await ClientModel.get(req.params.id);
     var base64_image = await client.getScreenshot();
     var base64Data = base64_image.replace(/^data:image\/png;base64,/, "");
-
+    // console.log('base64Data', base64Data)
     var file_path = "screenshot/" + client.mac.replace(/:/g, '_') + ".png";
     require("fs").writeFile('./public/' + file_path, base64Data, 'base64', function (err) {
         if (err) {
@@ -136,4 +136,9 @@ exports.osd = async (req, res) => {
 exports.getConfig = async (req, res) => {
     var client = await ClientModel.get(req.params.id);
     res.json(await client.getConfig());
+}
+
+exports.displayNumber = (req, res) => {
+    console.log(req.params.number)
+    res.render('displayPage', { number: req.params.number })
 }
