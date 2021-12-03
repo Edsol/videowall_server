@@ -30,6 +30,15 @@ exports.openUrl = async (req, res) => {
     res.json(response)
 }
 
+exports.openBookmark = async (req, res) => {
+    console.log(req.params)
+    var client = await ClientModel.get(req.params.client_id);
+    var bookmark = await BookmarkModel.get(req.params.bookmark_id);
+    var response = client.openUrl(bookmark.url, client.ip_address)
+    res.json(response)
+}
+
+
 /*
 * take screenshot of remote client screen
 */

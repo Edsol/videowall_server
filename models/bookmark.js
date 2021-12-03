@@ -17,6 +17,14 @@ class bookmark {
             data: data
         });
     }
+
+    static async get(id) {
+        return await prisma.bookmark.findFirst({
+            where: {
+                id: parseInt(id)
+            }
+        })
+    }
 }
 
 module.exports = bookmark

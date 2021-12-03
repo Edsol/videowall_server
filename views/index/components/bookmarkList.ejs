@@ -1,7 +1,10 @@
-<div class="">
-    <div class="list-group">
-        <% bookmarks.forEach((bookmark) => { %>
-            <a href="#" class="list-group-item list-group-item-action" title="Load on device"><%- bookmark.url %> </a>
-            <% }) %> 
-      </div>
-</div>
+<div id="sortable-bookmark-container" class="list-group BlockLayout">
+    <% bookmarks.forEach((bookmark) => { %>
+        <div class="isDropzone">
+            <a href="#" class="list-group-item list-group-item-action bookmark isDraggable" title="Load on device" data-bookmark-id='<%- bookmark.id %>'>
+                <i class='fas fa-arrows-alt my-handle'></i>
+                <%- bookmark.url %>
+            </a>
+        </div>
+        <% }) %> 
+  </div>

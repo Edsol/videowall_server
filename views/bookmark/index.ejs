@@ -1,8 +1,7 @@
-<!DOCTYPE html>
-<html>
-  <%- include('../template/header',{title: 'PiWall bookmark'})%> 
-  <body>
-    <a class='btn btn-sm btn-primary' href="bookmark/add">Add</a>
+<%- include('../template/header',{title: 'PiWall bookmark'})%> 
+<%- include('../template/navbar') %> 
+<div class="page-content">
+  <a class='btn btn-sm btn-primary' href="bookmark/add">Add</a>
     <hr>
     <h4>Bookmark list</h4>
     <table class="table">
@@ -21,6 +20,4 @@
         <% }) %>
       </tbody>
     </table>
-
-  </body>
-</html>
+</div>

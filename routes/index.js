@@ -6,6 +6,7 @@ var index_controller = require('../controllers/index');
 // router.get('/index', index_controller.getClients);
 router.get('/', index_controller.index);
 router.post('/openUrl', index_controller.openUrl)
+router.get('/openBookmark/:bookmark_id/:client_id', index_controller.openBookmark)
 router.get('/getScreenshot/:id', index_controller.getScreenshot);
 router.get('/reboot/:id', index_controller.reboot);
 router.get('/closeRemoteBrowser/:id', index_controller.closeRemoteBrowser);

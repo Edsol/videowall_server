@@ -35,8 +35,12 @@ app.use('/awesome-notifications', express.static(__dirname + '/node_modules/awes
 app.use('/viewerjs', express.static(__dirname + '/node_modules/viewerjs/dist'))
 app.use('/jsonviewer', express.static(__dirname + '/node_modules/jquery.json-viewer/json-viewer'))
 
+app.use('/draggable', express.static(__dirname + '/node_modules/@shopify/draggable/lib'))
+
 app.use('/', indexRouter);
 app.use('/bookmark', bookmarkRouter);
+
+// app.locals.Sortable = require('sortablejs');
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
