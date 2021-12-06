@@ -1,7 +1,3 @@
-const nmap = require('node-nmap');
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient();
-
 const ClientModel = require('../models/client');
 const BookmarkModel = require('../models/bookmark');
 
@@ -77,55 +73,6 @@ exports.closeRemoteBrowser = async (req, res) => {
 
 exports.listClient = async (req, res) => {
     res.json(await ClientModel.getList());
-}
-
-exports.findNewClient = async (req, res) => {
-    network_class = "192.168.1.0/24"
-    console.log(network_class)
-    var list = await this.networkScan(network_class + "/24");
-    for (const element of list) {
-        if (await ClientModel.exists({ mac: element.mac })) {
-            var existing_client = await prisma.client.findFirst({
-                where: {
-                    mac: element.mac
-                }
-            });
-            await ClientModel.updateByMac(existing_client.id, {
-                hostname: element.hostname,
-                ip: element.ip
-            });
-        } else {
-            console.log(element)
-            await ClientModel.create(element);
-        }
-    }
-    return list;
-}
-
-exports.networkScan = async (req, res) => {
-    if (network_class === undefined) {
-        return [];
-    }
-    return new Promise(async (resolve, reject) => {
-        var nmapscan = new nmap.QuickScan(network_class);
-        nmapscan.on('complete', async function (data) {
-            var list = [];
-            for (const element of data) {
-                if (element.vendor === 'Raspberry Pi Trading' || element.vendor === 'Raspberry Pi Foundation') {
-
-                    var pi_client = new ClientModel(element)
-                    pi_client = await pi_client.init();
-                    list.push(pi_client)
-                }
-            }
-            resolve(list)
-        });
-        nmapscan.on('error', function (error) {
-            reject(error)
-        });
-
-        nmapscan.startScan();
-    })
 }
 
 exports.osd = async (req, res) => {

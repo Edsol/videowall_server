@@ -40,4 +40,14 @@ $(document).on('click','.delete-client',(event) =>{
 		}
 	})
 })
+
+
+$('#find_client').on('click',(event) =>{
+  notifier.asyncBlock(
+    axios.get('/client/findNewClient'),
+    resp => {
+      location.reload()
+    },
+  );
+})
 </script>

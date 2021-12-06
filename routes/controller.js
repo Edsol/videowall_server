@@ -12,7 +12,7 @@ router.get('/reboot/:id', controller_controller.reboot);
 router.get('/closeRemoteBrowser/:id', controller_controller.closeRemoteBrowser);
 
 router.get('/listClient', controller_controller.listClient);
-router.get('/findNewClient', controller_controller.findNewClient);
+
 router.get('/osd/:id', controller_controller.osd);
 router.get('/getConfig/:id', controller_controller.getConfig)
 

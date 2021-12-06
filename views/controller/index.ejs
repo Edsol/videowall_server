@@ -1,14 +1,19 @@
 <%- include('../template/header',{title: 'PiWall controller'})%> 
 <%- include('../template/navbar',{active:'controller'}) %>
 
-<button id='sidebarCollapse' class='btn btn-sm btn-primary'>Show bookmarks</button>
+<div class='row'>
+  <div class="col-12">
+    <button id='sidebarCollapse' class='btn btn-sm btn-primary mt-2 ml-5'>Show bookmarks</button>
+  </div>
+</div>
 
 <div class='wrapper'>
-  <nav id="sidebar">
+  <nav id="sidebar" class="active" style="margin-top:30px">
   <%- include('components/bookmarkList',{bookmarks: bookmarks}) %> 
   </nav>
 
   <div class='page-content p-3'>
+   
     <%- include('components/clientList',{clients: clients})%> 
   </div>
 </div>
@@ -136,35 +141,14 @@
     });
   })
 
-  $('#find_client').on('click',(event) =>{
-    disableFindButton(true);
-    axios.get('/findNewClient')
-    .then((response) =>{
-      console.log(response.data);
-      disableFindButton(false);
-      for(const element of response.data){
-        if(clientItemExists(element.ip) === false){
-          newClientRow(element)
-        }
-        
-      }
-    })
-  })
+
 
   function clientItemExists(ip){
     var count = $(`[data-ipaddress="${ip}"]`).length;
     return count === 0 ? false : true;
   }
 
-  function disableFindButton(status){
-    if(status){
-      $('.spinner-find-client').removeClass('d-none');
-      $('#find_client').attr('disabled','disabled')
-    }else{
-      $('.spinner-find-client').addClass('d-none');
-      $('#find_client').removeAttr('disabled')
-    }
-  }
+
 
   function addImageViewer(element){
     new Viewer(element, {
