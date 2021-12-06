@@ -7,6 +7,7 @@ var cors = require('cors')
 
 var indexRouter = require('./routes/index');
 var bookmarkRouter = require('./routes/bookmark');
+var clientRouter = require('./routes/client');
 
 var app = express();
 
@@ -39,6 +40,7 @@ app.use('/draggable', express.static(__dirname + '/node_modules/@shopify/draggab
 
 app.use('/', indexRouter);
 app.use('/bookmark', bookmarkRouter);
+app.use('/client', clientRouter);
 
 // app.locals.Sortable = require('sortablejs');
 
