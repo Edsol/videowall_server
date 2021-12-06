@@ -167,6 +167,14 @@ class Client {
 		return await this.doRequest('getConfig');
 	}
 
+	static async delete(id) {
+		return await prisma.client.delete({
+			where: {
+				id: parseInt(id)
+			}
+		})
+	}
+
 }
 
 module.exports = Client

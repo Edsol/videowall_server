@@ -23,3 +23,9 @@ exports.save = async function (req, res, next) {
         }
     }
 }
+
+exports.delete = async function (req, res) {
+    console.log(req.params.id)
+    bookmarkModel.delete(req.params.id)
+    res.redirect('/bookmark')
+}

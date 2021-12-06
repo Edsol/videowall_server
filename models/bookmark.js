@@ -25,6 +25,14 @@ class bookmark {
             }
         })
     }
+
+    static async delete(id) {
+        return await prisma.bookmark.delete({
+            where: {
+                id: parseInt(id)
+            }
+        })
+    }
 }
 
 module.exports = bookmark

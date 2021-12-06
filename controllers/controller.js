@@ -14,8 +14,8 @@ const BookmarkModel = require('../models/bookmark');
 exports.index = async (req, res) => {
     var clients = await ClientModel.getList();
     var bookmarks = await BookmarkModel.getList();
-    console.log(bookmarks)
-    res.render('index/index', {
+
+    res.render('controller/index', {
         clients: clients,
         bookmarks: bookmarks
     });

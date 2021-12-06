@@ -1,23 +1,40 @@
 <%- include('../template/header',{title: 'PiWall bookmark'})%> 
 <%- include('../template/navbar',{active:'bookmark'}) %> 
+
 <div class="page-content">
-  <a class='btn btn-sm btn-primary' href="bookmark/add">Add</a>
-    <hr>
-    <h4>Bookmark list</h4>
-    <table class="table">
-      <thead>
+<a class='btn btn-sm btn-primary' href="bookmark/add">Add</a>
+  <hr>
+  <h4>Bookmark list</h4>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Url</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% bookmarks.forEach((bookmark,index) => { %>
         <tr>
-          <th>#</th>
-          <th>Url</th>
+          <td scope="row"><%- bookmark.id %></td>
+          <td><%- bookmark.url %> </td>
+          <td>
+            <i class="far fa-trash-alt cursor-pointer delete-bookmark" title='delete bookmark' data-bookmark-id="<%- bookmark.id %> "></i>
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        <% bookmarks.forEach((bookmark,index) => { %>
-          <tr>
-            <td scope="row"><%- bookmark.id %></td>
-            <td><%- bookmark.url %> </td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
+      <% }) %>
+    </tbody>
+  </table>
 </div>
+
+<script>
+$(document).on('click','.delete-bookmark',(event) =>{
+  var id = event.currentTarget.dataset.bookmarkId
+  
+  confirmDialog('delete bookmark','do you want to proceed to remove the bookmark?',(response) =>{
+    if(response){
+      window.location.href = '/bookmark/delete/'+id
+    }
+  })
+})
+</script>

@@ -1,2 +1,43 @@
-<%- include('../template/header',{title: 'PiWall controller'})%> 
-<%- include('../template/navbar',{active:'client'}) %> 
+<%- include('../template/header',{title: 'PiWall client'})%> 
+<%- include('../template/navbar',{active:'client'}) %>
+
+<div class='page-content p-3'>
+    <button id='find_client' class="btn btn-sm btn-primary mt-2 mb-2" type="button">
+        <span class="spinner-border spinner-border-sm spinner-find-client d-none" role="status" aria-hidden="true"></span>
+        Search device
+      </button>
+    
+    <table class="table">
+        <thead>
+            <th>Ip address</th>
+            <th>Hostname</th>
+            <th>Mac</th>
+            <th></th>
+        </thead>
+        <tbody>
+            <% clients.forEach(client => { %>
+                <tr>
+                    <td><%- client.ip %></td>
+                    <td><%- client.hostname %></td>
+                    <td><%- client.mac %></td>
+                    <td>
+                        <i class="far fa-trash-alt cursor-pointer delete-client" title='delete client' data-client-id="<%- client.id %> "></i>
+                      </td>
+                </tr>
+                <% }) %> 
+        </tbody>
+    </table>
+  </div>
+
+
+<script>
+$(document).on('click','.delete-client',(event) =>{
+	var id = event.currentTarget.dataset.clientId
+	
+	confirmDialog('delete client','do you want to proceed to remove the client?',(response) =>{
+		if(response){
+			window.location.href = '/client/delete/'+id
+		}
+	})
+})
+</script>

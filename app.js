@@ -5,7 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors')
 
-var indexRouter = require('./routes/index');
+var controllerRouter = require('./routes/controller');
 var bookmarkRouter = require('./routes/bookmark');
 var clientRouter = require('./routes/client');
 
@@ -38,7 +38,7 @@ app.use('/jsonviewer', express.static(__dirname + '/node_modules/jquery.json-vie
 
 app.use('/draggable', express.static(__dirname + '/node_modules/@shopify/draggable/lib'))
 
-app.use('/', indexRouter);
+app.use('/', controllerRouter);
 app.use('/bookmark', bookmarkRouter);
 app.use('/client', clientRouter);
 

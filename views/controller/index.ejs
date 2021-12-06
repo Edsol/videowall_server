@@ -1,0 +1,224 @@
+<%- include('../template/header',{title: 'PiWall controller'})%> 
+<%- include('../template/navbar',{active:'controller'}) %>
+
+<button id='sidebarCollapse' class='btn btn-sm btn-primary'>Show bookmarks</button>
+
+<div class='wrapper'>
+  <nav id="sidebar">
+  <%- include('components/bookmarkList',{bookmarks: bookmarks}) %> 
+  </nav>
+
+  <div class='page-content p-3'>
+    <%- include('components/clientList',{clients: clients})%> 
+  </div>
+</div>
+
+
+<script>
+  $(document).ready((event) =>{
+    $('#sidebarCollapse').on('click', function () {
+      $('#sidebar').toggleClass('active');
+  });
+
+    //load viewer image if screenshot is preload
+    $('.device-image').each((index,element) =>{
+      addImageViewer(element);
+    })
+
+
+    const containers = document.querySelectorAll('.BlockLayout'); 
+    var deviceDroppedId = null;
+    var overContainer = null;
+
+    const droppable = new Draggable.Draggable(containers, {
+      draggable: '.isDraggable',
+      dropzone: '.isDropzone',
+        mirror: {
+          constrainDimensions: true,
+        },
+      });
+
+      droppable.on('drag:stop', (evt) => {
+        var bookmark_id = evt.originalSource.dataset.bookmarkId;
+        var client_id = overContainer.dataset.id;
+        if(bookmark_id && client_id){
+          openBookmarkToClient(bookmark_id,client_id);
+        }
+      });
+
+      droppable.on('drag:over:container', function (event) {
+        overContainer = event.overContainer;
+      })
+
+      droppable.on('drag:out:container', function (event) {
+        overContainer = null;
+      })
+
+  })
+
+  $(document).on('click','.update-screenshot', event =>{
+    var main_element = event.currentTarget.closest('.remote-client-item');
+    var id = main_element.dataset.id
+    axios.get(`/getScreenshot/${id}`)
+    .then((response) =>{
+      var image_element = $(main_element).find('.screen_image');
+      image_element.attr('src',"data:image/png;base64,"+response.data);
+      addImageViewer(image_element.get(0));
+    })
+  })
+
+  $(document).on('click','.reboot-remote-device', event =>{
+    var main_element = event.currentTarget.closest('.remote-client-item');
+    var id = main_element.dataset.id
+    notifier.asyncBlock(
+      axios.get(`/reboot/${id}`),
+      resp => notifier.success(`the remote device has been rebooted`),
+    );
+  })
+
+  $(document).on('click','.close-all-browser-page', event =>{
+    confirmDialog('Close remote browser','Do you really want close all remote browser?',function (result) {
+      if(result){
+        var main_element = event.currentTarget.closest('.remote-client-item');
+        var id = main_element.dataset.id
+        simpleGet(`/closeRemoteBrowser/${id}`)
+      }
+    });
+  })
+
+  $(document).on('click','.show-osd-number',event =>{
+    var main_element = event.currentTarget.closest('.remote-client-item');
+    var id = main_element.dataset.id
+    
+    notifier.asyncBlock(
+      axios.get(`/osd/${id}`),
+      resp => notifier.success(),
+    );
+  })
+
+  function newClientRow(args){
+    var row = $(".remote-client-template").clone()
+    row.removeClass('d-none remote-client-template')
+    .addClass('remote-client-item')
+    .attr('data-ip-address',args.ip)
+    .attr('data-id',args.id)
+
+    row.find('.hostname').html(args.hostname);
+
+    row.find('.ip_address').html(args.ip);
+    row.find('.mac_address').html(`(${args.mac})`);
+
+    addImageViewer(row.find('.screen_image').get(0));
+    $('.list-client').children('.row').append(row)       
+  }
+
+  $(document).on('click','.send-url',event => {
+    var element = event.currentTarget.closest('.remote-client-item');
+    bootbox.prompt({
+      title: "Specify the url", 
+      centerVertical: true,
+      callback: function(url){
+        if(url){
+          var regex = new RegExp(/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi);
+          if (url.match(regex) === null) {
+            alert("Invalid url");
+          } else {
+            notifier.asyncBlock(
+              axios.post('/openUrl',{
+                id: element.dataset.id,
+                url:url
+                }),
+              resp => notifier.success(`${resp.data.length} posts has been loaded`),
+            );
+          }
+        }
+      }
+    });
+  })
+
+  $('#find_client').on('click',(event) =>{
+    disableFindButton(true);
+    axios.get('/findNewClient')
+    .then((response) =>{
+      console.log(response.data);
+      disableFindButton(false);
+      for(const element of response.data){
+        if(clientItemExists(element.ip) === false){
+          newClientRow(element)
+        }
+        
+      }
+    })
+  })
+
+  function clientItemExists(ip){
+    var count = $(`[data-ipaddress="${ip}"]`).length;
+    return count === 0 ? false : true;
+  }
+
+  function disableFindButton(status){
+    if(status){
+      $('.spinner-find-client').removeClass('d-none');
+      $('#find_client').attr('disabled','disabled')
+    }else{
+      $('.spinner-find-client').addClass('d-none');
+      $('#find_client').removeAttr('disabled')
+    }
+  }
+
+  function addImageViewer(element){
+    new Viewer(element, {
+      modal: true,
+      backdrop: true,
+      viewed() {},
+    });
+  }
+
+  function successNotification(message){
+    new AWN().success(message)
+  }
+
+  function simpleGet(action){
+    axios.get(action)
+    .then((response) =>{
+      if(response.status === 200){
+        successNotification();
+      }
+    })
+  }
+
+  function openBookmarkToClient(bookmark_id,client_id){
+    confirmDialog('Open bookmark','do you want to proceed to open this bookmark on your device?',(result) =>{
+      if(result){
+        simpleGet(`openBookmark/${bookmark_id}/${client_id}`)
+      }
+    })
+  }
+</script>
+
+<style>
+  .wrapper {
+    display: flex;
+    align-items: stretch;
+  }
+  
+    #sidebar {
+      min-width: 350px;
+      max-width: 350px;
+      margin-left: -350px;
+      -webkit-transition: all .5s ease-in-out;
+      -moz-transition: all .5s ease-in-out;
+      -ms-transition: all .5s ease-in-out;
+      -o-transition: all .5s ease-in-out;
+      transition: all .5s ease-in-out;
+  }
+  
+  #sidebar.active {
+      margin-left: 0px;
+      -webkit-transition: all .5s ease-in-out;
+      -moz-transition: all .5s ease-in-out;
+      -ms-transition: all .5s ease-in-out;
+      -o-transition: all .5s ease-in-out;
+      transition: all .5s ease-in-out;
+  }
+</style>

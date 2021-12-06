@@ -12,5 +12,6 @@ var addValidate = [
     body('url').isURL().trim().escape().withMessage('Url is required')
 ];
 router.post('/add', addValidate, bookmark_controller.save);
+router.get('/delete/:id', bookmark_controller.delete)
 
 module.exports = router;
