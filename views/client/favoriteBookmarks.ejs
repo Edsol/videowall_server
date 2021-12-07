@@ -1,0 +1,48 @@
+<%- include('../template/header',{title: 'PiWall - Client bookmarks'})%> 
+<%- include('../template/navbar',{active:'client'}) %>
+
+<div class="page-content">
+	<button class='btn btn-sm btn-success submit' type="submit" form="form">Save</button>
+	<hr>
+	<div class="row">
+    <div class="col-lg-3 col-sm-4">
+				<h5>List of bookmarks</h5>
+        <div id="sortable-bookmark-container" class="list-group border StackedList">
+            <% bookmarks.forEach((bookmark) => { %>
+                <div class="isDropzone">
+										
+					<a href="#" class="list-group-item list-group-item-action bookmark" data-bookmark-id='<%- bookmark.id %>'>
+						<input type="hidden" name="bookmark" value="<%- bookmark.id %>">
+							<%- bookmark.url %>
+					</a>
+                </div>
+                <% }) %> 
+          </div>
+    </div>
+    <div class="col-lg-9 col-sm-8">
+			<h5>Client favorite bookmarks</h5>
+			<form id='form' method="POST">
+				<div class="list-group border StackedList">
+
+				</div>
+			</form>
+    </div>
+	</div>
+</div>
+
+<script>
+	const containers = document.querySelectorAll('.StackedList');
+	
+	const droppable = new Draggable.Sortable(containers, {
+		draggable: '.bookmark',
+			mirror: {
+				constrainDimensions: true,
+			},
+		});
+</script>
+
+<style>
+	.StackedList{
+		min-height: 700px;
+	}
+</style>

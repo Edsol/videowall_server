@@ -8,26 +8,21 @@ datasource db {
 }
 
 model Client {
-  id               Int                @id @default(autoincrement())
-  ip               String
-  mac              String?            @unique
-  hostname         String?            @unique
-  alias            String             @default("")
-  screenshotPath   String             @default("")
-  BookmarksClients BookmarksClients[]
+  id             Int        @id @default(autoincrement())
+  ip             String
+  mac            String?    @unique
+  hostname       String?    @unique
+  alias          String     @default("")
+  screenshotPath String     @default("")
+  bookmarks      Bookmark[]
+
+  @@map("client")
 }
 
 model Bookmark {
-  id               Int                @id @default(autoincrement())
-  url              String?
-  BookmarksClients BookmarksClients[]
-}
+  id      Int      @id @default(autoincrement())
+  url     String?
+  clients Client[]
 
-model BookmarksClients {
-  client     Client   @relation(fields: [clientId], references: [id])
-  clientId   Int
-  bookmark   Bookmark @relation(fields: [bookmarkId], references: [id])
-  bookmarkId Int
-
-  @@id([clientId, bookmarkId])
+  @@map("bookmark")
 }

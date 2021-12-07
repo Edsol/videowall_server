@@ -11,3 +11,4 @@
 
 [ENDED]
 - refactoring funzioni routes in controller
+- ottimizzata la ricerca dei dispositivi in rete tramite la libreria @network-utils/arp-lookup

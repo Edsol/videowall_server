@@ -21,7 +21,8 @@
                     <td><%- client.hostname %></td>
                     <td><%- client.mac %></td>
                     <td>
-                        <i class="far fa-trash-alt cursor-pointer delete-client" title='delete client' data-client-id="<%- client.id %> "></i>
+                        <a href="/client/favoriteBookmarks/<%- client.id %>"><i class="fas fa-bookmark cursor-pointer set-bookmark text-black" title="set favorite boomarks"></i></a>
+                        <i class="far fa-trash-alt cursor-pointer delete-client" title='delete client' data-client-id="<%- client.id %>"></i>
                       </td>
                 </tr>
                 <% }) %> 
@@ -49,5 +50,9 @@ $('#find_client').on('click',(event) =>{
       location.reload()
     },
   );
+})
+
+$('.set-bookmark').on('click',(event) =>{
+  var id = event.currentTarget.dataset.clientId
 })
 </script>

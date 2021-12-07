@@ -101,22 +101,6 @@
     );
   })
 
-  function newClientRow(args){
-    var row = $(".remote-client-template").clone()
-    row.removeClass('d-none remote-client-template')
-    .addClass('remote-client-item')
-    .attr('data-ip-address',args.ip)
-    .attr('data-id',args.id)
-
-    row.find('.hostname').html(args.hostname);
-
-    row.find('.ip_address').html(args.ip);
-    row.find('.mac_address').html(`(${args.mac})`);
-
-    addImageViewer(row.find('.screen_image').get(0));
-    $('.list-client').children('.row').append(row)       
-  }
-
   $(document).on('click','.send-url',event => {
     var element = event.currentTarget.closest('.remote-client-item');
     bootbox.prompt({

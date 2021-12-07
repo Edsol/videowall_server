@@ -21,11 +21,12 @@ class Client {
 		return await prisma.client.findMany()
 	}
 
-	static async get(id) {
-		var client = await prisma.client.findFirst({
+	static async get(id, includes) {
+		var client = await prisma.client.findUnique({
 			where: {
 				id: parseInt(id)
-			}
+			},
+			include: includes
 		});
 
 		return new Client(client)
@@ -60,7 +61,6 @@ class Client {
 	}
 
 	async setField(id, field, value) {
-		console.log(id)
 		return await prisma.client.update({
 			where: {
 				id: parseInt(id)
@@ -71,6 +71,25 @@ class Client {
 		});
 	}
 
+	static async find(args, includes) {
+		return await prisma.client.findMany({
+			where: args,
+			include: includes
+		})
+	}
+
+	static async connnectBookmark(id, bookmarks_ids) {
+		return await prisma.client.update({
+			where: { id: parseInt(id) },
+			data: {
+				BookmarksClients: {
+					connect: {
+						id: 4
+					}
+				}
+			}
+		})
+	}
 	/**
 	 */
 	async init() {
