@@ -132,3 +132,8 @@ exports.displayNumber = (req, res) => {
     console.log(req.params.number)
     res.render('displayPage', { number: req.params.number })
 }
+
+exports.fillsAllHostname = async (req, res) => {
+    await clientModel.fillHostname();
+    res.json(true)
+}

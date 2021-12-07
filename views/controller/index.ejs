@@ -6,31 +6,18 @@
     <button id='sidebarCollapse' class='btn btn-sm btn-primary mt-2 ml-5'>Show bookmarks</button>
   </div>
   <div class="col-auto">
-    <div class="dropdown mt-2">
-      <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-        Broadcast
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-        <li>
-          <a class="dropdown-item broadcast-close-browser" href="#" title="close browser in all client">
-            <i class="fas fa-window-close cursor-pointer"></i> Close all browser
-          </a>
-        </li>
-        <li>
-          <a class="dropdown-item broadcast-show-osd-number" href="#" title="show display number in all client">
-            <i class="fas fa-fingerprint cursor-pointer"></i> Show display number
-          </a>
-        </li>
-      </ul>
-    </div>
+    <%- include('broadcastDropdown') %> 
   </div>
 </div>
 
 <div class='wrapper'>
-  <nav id="sidebar" style="margin-top:30px">
-  <%- include('components/bookmarkList',{bookmarks: bookmarks}) %> 
+  <nav id="sidebar" style="margin-top:30px;padding:5px;">
+  <%- include('components/bookmarkList',{
+    bookmarks: bookmarks
+  }) %> 
   </nav>
 
+  <div class="vl"></div>
   <div class='page-content p-3'>
    
     <%- include('components/clientList',{clients: clients})%> 
@@ -86,8 +73,10 @@
     axios.get(`/getScreenshot/${id}`)
     .then((response) =>{
       var image_element = $(main_element).find('.screen_image');
-      image_element.attr('src',"data:image/png;base64,"+response.data);
-      addImageViewer(image_element.get(0));
+      if(image_element !=='ECONNABORTED'){
+        image_element.attr('src',"data:image/png;base64,"+response.data);
+        addImageViewer(image_element.get(0));
+      }
     })
   })
 
@@ -161,6 +150,13 @@
     })
   })
 
+  $(".broadcast-fill-hostname").on('click',event =>{
+    notifier.asyncBlock(
+      axios.get('/client/fillsAllHostname'),
+      resp => location.reload(),
+    );
+  })
+  
 
   function clientItemExists(ip){
     var count = $(`[data-ipaddress="${ip}"]`).length;
@@ -181,11 +177,14 @@
     new AWN().success(message)
   }
 
-  function simpleGet(action){
+  function simpleGet(action,callback = null){
     axios.get(action)
     .then((response) =>{
       if(response.status === 200){
         successNotification();
+        if(callback){
+          callback(response)
+        }
       }
     })
   }
@@ -200,6 +199,10 @@
 </script>
 
 <style>
+  .hostname{
+    font-weight: bold;
+    font-size: 1.5rem;
+  }
   .wrapper {
     display: flex;
     align-items: stretch;
@@ -223,5 +226,10 @@
       -ms-transition: all .5s ease-in-out;
       -o-transition: all .5s ease-in-out;
       transition: all .5s ease-in-out;
+  }
+  .vl {
+    border-left: 2px solid black;
+    height: 800px;
+    margin-left: -2px;
   }
 </style>

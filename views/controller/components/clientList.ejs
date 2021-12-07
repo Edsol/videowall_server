@@ -7,62 +7,19 @@
             <img src="<%- client.screenshotPath === '' ? '/images/no_image.png' : client.screenshotPath %>" class='img-fluid cursor-pointer screen_image <%- client.screenshotPath === '' ? '' : 'device-image' %>' title="Click to open preview image">
           </div>
           <div class="col-lg-6 col-sm-12">
-            <div>
-              <div class="mb-1 font-weight-bold hostname"><%- client.hostname %> </div>
-              <%# <i class='fas fa-arrows-alt float-right my-handle' title="drag to move device"></i> %>
-            </div>
-            <div>
-              <small class="text-mute">
-                <span class="p-2 font-weight-bold ip_address"><%- client.ip %> </span>
-                <span class="mac_address"><%- client.mac %> </span>
-              </small>
+            <div class="hostname"><%- client.hostname %></div>
+            <hr class='m-0'>
+            <div class='row'>
+              <div class="col-lg-12 col-md-12 font-weight-bold ip_address">
+                <b>IP Address:</b> <%- client.ip %>
+              </div>
+              <div class="col-lg-12 col-md-12 mac_address">
+                <b>MAC:</b><%- client.mac %>
+              </div>
             </div>
 
-            <div class="dropdown">
-              <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                Tools
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><h6 class="dropdown-header">Utils</h6></li>
-                <li>
-                  <a class="dropdown-item send-url" href="#" title="open page in remote browser">
-                    <i class="fas fa-paper-plane cursor-pointer"></i> Open specific url
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item  update-screenshot" href="#" title="take a screenshot">
-                    <i class="fas fa-camera cursor-pointer"></i> Take screenshot
-                  </a>
-                </li>
-
-                <li>
-                  <a class="dropdown-item close-all-browser-page" href="#" title="close all remote browser page">
-                    <i class="fas fa-window-close cursor-pointer"></i> Close remote browser
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item show-osd-number" href="#" title="show display number">
-                    <i class="fas fa-fingerprint cursor-pointer"></i> Show display number
-                  </a>
-                </li>
-                <li><h6 class="dropdown-header">Other</h6></li>
-                <li>
-                  <a class="dropdown-item open-terminal" href="#" title="open ssh connection">
-                    <i class="fas fa-terminal cursor-pointer"></i> Open ssh connection
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item reboot-remote-device" href="#" title="reboot remote device">
-                    <i class="fas fa-power-off cursor-pointer"></i> Reboot device
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item config-remote-device" href="#" title="show config from remote device">
-                    <i class="fas fa-info cursor-pointer"></i> Show config
-                  </a>
-                </li>
-              </ul>
-            </div>
+            <%- include('dropdown/tools')%> 
+            <%- include('dropdown/bookmarks',{bookmarks:client.bookmarks,client:client})%> 
           </div>
         </div>
       </div>

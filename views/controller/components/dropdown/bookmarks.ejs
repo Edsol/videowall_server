@@ -1,0 +1,14 @@
+<span class="dropdown">
+	<button class="btn btn-sm btn-secondary  bg-dark dropdown-toggle" type="button" id="dropdownBookmarks" data-bs-toggle="dropdown" aria-expanded="false">
+			<i class="far fa-bookmark"></i>
+	</button>
+	<ul class="dropdown-menu" aria-labelledby="dropdownBookmarks">
+			<% bookmarks.forEach(bookmark => { %>
+					<li>
+							<a class="dropdown-item" href="#" title="open url" onclick="openBookmarkToClient('<%- bookmark.id %>','<%- client.id %>')">
+									<%- bookmark.url %> 
+							</a>
+					</li>
+			<% }) %> 
+	</ul>
+</span>

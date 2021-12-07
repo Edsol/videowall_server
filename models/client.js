@@ -18,7 +18,11 @@ class Client {
 	}
 
 	static async getList() {
-		return await prisma.client.findMany()
+		return await prisma.client.findMany({
+			include: {
+				bookmarks: true
+			}
+		})
 	}
 
 	static async get(id, includes = null, return_object = true) {
@@ -105,6 +109,27 @@ class Client {
 				}
 			}
 		})
+	}
+
+	static async fillHostname() {
+		var clients = await prisma.client.findMany({
+			where: {
+				hostname: null
+			}
+		})
+
+		var updated = 0;
+
+		for (var client of clients) {
+			client = new Client(client);
+			var client_config = await client.getConfig();
+
+			if (client_config.hostname) {
+				client.setField(client.id, 'hostname', client_config.hostname)
+				updated++;
+			}
+		}
+		return updated;
 	}
 	/**
 	 */
