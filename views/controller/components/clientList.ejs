@@ -18,14 +18,50 @@
               </small>
             </div>
 
-            <div class="tools-icon">
-              <i class="fas fa-paper-plane cursor-pointer send-url" title="open page in remote browser"></i>
-              <i class="fas fa-camera cursor-pointer update-screenshot" title="take a screenshot"></i>
-              <i class="fas fa-window-close cursor-pointer close-all-browser-page" title="close all remote browser page"></i>
-              <i class="fas fa-terminal cursor-pointer open-terminal" title="open ssh connection"></i>
-              <i class="fas fa-power-off cursor-pointer reboot-remote-device" title="reboot remote device"></i>
-              <i class="fas fa-fingerprint cursor-pointer show-osd-number" title="show display number"></i>
-              <i class="fas fa-info cursor-pointer config-remote-device" title="show config from remote device"></i>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                Tools
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><h6 class="dropdown-header">Utils</h6></li>
+                <li>
+                  <a class="dropdown-item send-url" href="#" title="open page in remote browser">
+                    <i class="fas fa-paper-plane cursor-pointer"></i> Open specific url
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item  update-screenshot" href="#" title="take a screenshot">
+                    <i class="fas fa-camera cursor-pointer"></i> Take screenshot
+                  </a>
+                </li>
+
+                <li>
+                  <a class="dropdown-item close-all-browser-page" href="#" title="close all remote browser page">
+                    <i class="fas fa-window-close cursor-pointer"></i> Close remote browser
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item show-osd-number" href="#" title="show display number">
+                    <i class="fas fa-fingerprint cursor-pointer"></i> Show display number
+                  </a>
+                </li>
+                <li><h6 class="dropdown-header">Other</h6></li>
+                <li>
+                  <a class="dropdown-item open-terminal" href="#" title="open ssh connection">
+                    <i class="fas fa-terminal cursor-pointer"></i> Open ssh connection
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item reboot-remote-device" href="#" title="reboot remote device">
+                    <i class="fas fa-power-off cursor-pointer"></i> Reboot device
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item config-remote-device" href="#" title="show config from remote device">
+                    <i class="fas fa-info cursor-pointer"></i> Show config
+                  </a>
+                </li>
+              </ul>
             </div>
           </div>
         </div>

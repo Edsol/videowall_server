@@ -1,6 +1,9 @@
 const ClientModel = require('../models/client');
 const BookmarkModel = require('../models/bookmark');
 
+var os = require('os');
+var networkInterfaces = os.networkInterfaces();
+
 
 // exports.getClients = async (req, res) => {
 //     var list = await ClientModel.getList();
@@ -21,14 +24,14 @@ exports.index = async (req, res) => {
 * open page in remote browser
 */
 exports.openUrl = async (req, res) => {
-    var client = await ClientModel.get(req.body.id);
+    var client = await ClientModel.get(req.body.id, null, true);
+    console.log('openUrl client', client)
     var response = client.openUrl(req.body.url, client.ip_address)
     res.json(response)
 }
 
 exports.openBookmark = async (req, res) => {
-    console.log(req.params)
-    var client = await ClientModel.get(req.params.client_id);
+    var client = await ClientModel.get(req.params.client_id, null, true);
     var bookmark = await BookmarkModel.get(req.params.bookmark_id);
     var response = client.openUrl(bookmark.url, client.ip_address)
     res.json(response)
@@ -39,7 +42,7 @@ exports.openBookmark = async (req, res) => {
 * take screenshot of remote client screen
 */
 exports.getScreenshot = async (req, res) => {
-    var client = await ClientModel.get(req.params.id);
+    var client = await ClientModel.get(req.params.id, null, true);
     var base64_image = await client.getScreenshot();
     var base64Data = base64_image.replace(/^data:image\/png;base64,/, "");
     // console.log('base64Data', base64Data)
@@ -77,7 +80,7 @@ exports.listClient = async (req, res) => {
 
 exports.osd = async (req, res) => {
     var client = await ClientModel.get(req.params.id);
-    res.json(await client.showOsd('TEST'));
+    res.json(await client.showOsd(networkInterfaces.enp2s0[0].address + ":3000/client/displayNumber/" + client.id));
 }
 
 exports.getConfig = async (req, res) => {
@@ -85,7 +88,19 @@ exports.getConfig = async (req, res) => {
     res.json(await client.getConfig());
 }
 
-exports.displayNumber = (req, res) => {
-    console.log(req.params.number)
-    res.render('displayPage', { number: req.params.number })
+exports.broadcast = async (req, res) => {
+    var clientList = await ClientModel.getList();
+    for (var client of clientList) {
+        var clientObject = new ClientModel(client);
+        switch (req.params.action) {
+            case 'showOsd':
+                clientObject.openUrl(networkInterfaces.enp2s0[0].address + ":3000/client/displayNumber/" + client.id)
+                break;
+
+            case 'closeBrowser':
+                clientObject.closeAllBrowser();
+                break;
+        }
+    }
+
 }

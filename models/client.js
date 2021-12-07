@@ -21,7 +21,7 @@ class Client {
 		return await prisma.client.findMany()
 	}
 
-	static async get(id, includes) {
+	static async get(id, includes = null, return_object = true) {
 		var client = await prisma.client.findFirst({
 			where: {
 				id: parseInt(id)
@@ -29,6 +29,9 @@ class Client {
 			include: includes
 		});
 
+		if (return_object) {
+			return new Client(client);
+		}
 		return client;
 	}
 
@@ -78,12 +81,27 @@ class Client {
 		})
 	}
 
-	static async connnectBookmark(id, bookmarks_ids) {
+	static async disconnectAllBookmark(id) {
 		return await prisma.client.update({
-			where: { id: parseInt(id) },
+			where: {
+				id: parseInt(id)
+			},
 			data: {
 				bookmarks: {
-					connect: bookmarks_ids
+					set: []
+				}
+			}
+		})
+	}
+
+	static async connnectBookmark(id, bookmark_ids) {
+		return await prisma.client.update({
+			where: {
+				id: parseInt(id)
+			},
+			data: {
+				bookmarks: {
+					connect: bookmark_ids
 				}
 			}
 		})
@@ -175,9 +193,10 @@ class Client {
 		return await this.doRequest('reboot');
 	}
 
-	async showOsd(text) {
-		console.log(text)
-		return await this.doRequest('osd/' + text)
+	async showOsd(url) {
+		console.log(this.id)
+		// return await this.doRequest('osd/' + text)
+		return await this.openUrl(url);
 	}
 
 	async getConfig() {

@@ -15,7 +15,6 @@ router.get('/listClient', controller_controller.listClient);
 
 router.get('/osd/:id', controller_controller.osd);
 router.get('/getConfig/:id', controller_controller.getConfig)
-
-router.get('/displayNumber/:number', controller_controller.displayNumber)
+router.get('/broadcast/:action', controller_controller.broadcast)
 
 module.exports = router;

@@ -2,13 +2,32 @@
 <%- include('../template/navbar',{active:'controller'}) %>
 
 <div class='row'>
-  <div class="col-12">
+  <div class="col-auto">
     <button id='sidebarCollapse' class='btn btn-sm btn-primary mt-2 ml-5'>Show bookmarks</button>
+  </div>
+  <div class="col-auto">
+    <div class="dropdown mt-2">
+      <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+        Broadcast
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+        <li>
+          <a class="dropdown-item broadcast-close-browser" href="#" title="close browser in all client">
+            <i class="fas fa-window-close cursor-pointer"></i> Close all browser
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item broadcast-show-osd-number" href="#" title="show display number in all client">
+            <i class="fas fa-fingerprint cursor-pointer"></i> Show display number
+          </a>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
 
 <div class='wrapper'>
-  <nav id="sidebar" class="active" style="margin-top:30px">
+  <nav id="sidebar" style="margin-top:30px">
   <%- include('components/bookmarkList',{bookmarks: bookmarks}) %> 
   </nav>
 
@@ -125,6 +144,22 @@
     });
   })
 
+  //Broadcast
+  $(".broadcast-close-browser").on('click',event =>{
+    confirmDialog('attention', 'Do you want to proceed with this request? The command will be sent to all clients',(response) =>{
+      if(response){
+        simpleGet('/broadcast/closeBrowser')
+      }
+    })
+  })
+
+  $(".broadcast-show-osd-number").on('click',event =>{
+    confirmDialog('attention', 'Do you want to proceed with this request? The command will be sent to all clients',(response) =>{
+      if(response){
+        simpleGet('/broadcast/showOsd')
+      }
+    })
+  })
 
 
   function clientItemExists(ip){
