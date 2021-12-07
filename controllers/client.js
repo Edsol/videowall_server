@@ -95,17 +95,13 @@ exports.networkScan = async (req, res) => {
 
 exports.favoriteBookmarks = async (req, res) => {
     var all_bookmarks = await bookmarkModel.getList();
+    var client = await clientModel.get(req.params.id, { bookmarks: true });
 
-    var client = await clientModel.get(req.params.id, {
-        BookmarksClients: {
-            include: {
-                bookmark: true
-            }
-        }
-    });
-
-    console.log(client)
-
+    // for (var bookmark of all_bookmarks) {
+    //     console.log(bookmark)
+    // }
+    // console.log(all_bookmarks)
+    // console.log(client.bookmarks)
     res.render('client/favoriteBookmarks', {
         thisClient: client,
         bookmarks: all_bookmarks
@@ -114,11 +110,15 @@ exports.favoriteBookmarks = async (req, res) => {
 
 exports.saveFavoriteBookmarks = async (req, res) => {
     var client_id = req.params.id;
-    var bookmarks = req.body.bookmark
-    console.log(client_id, bookmarks)
-    bookmarks = 4
-    var clients = await clientModel.connnectBookmark(client_id, bookmarks)
+    var bookmarks = [];
+    if (typeof req.body.bookmark === 'string') {
+        bookmarks = [{ id: parseInt(req.body.bookmark) }];
+    } else {
+        req.body.bookmark.forEach(value => {
+            bookmarks.push({ id: parseInt(value) })
+        })
+    }
 
-    // this.favoriteBookmarks(req, res)
-    // res.redirect('/client/favoriteBookmarks/' + req.params.id)
+    await clientModel.connnectBookmark(client_id, bookmarks)
+    res.redirect('/client/favoriteBookmarks/' + req.params.id)
 }

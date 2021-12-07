@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 class bookmark {
     constructor(args) { }
 
-    static async getList() {
+    static async getList(ecluded) {
         return await prisma.bookmark.findMany({
             orderBy: {
                 id: 'desc'
