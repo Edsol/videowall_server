@@ -5,9 +5,13 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors')
 
+const session = require('express-session');
+const { flash } = require('express-flash-message');
+
 var controllerRouter = require('./routes/controller');
 var bookmarkRouter = require('./routes/bookmark');
 var clientRouter = require('./routes/client');
+var layoutRouter = require('./routes/layout');
 
 var app = express();
 
@@ -24,6 +28,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Custom
 app.use(cors())
 
+// express-session
+app.use(
+  session({
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+      // secure: true, // becareful set this option, check here: https://www.npmjs.com/package/express-session#cookiesecure. In local, if you set this to true, you won't receive flash as you are using `http` in local, but http is not secure
+    },
+  })
+);
+
+app.use(flash({ sessionKeyName: 'flashMessage' }));
+
 app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist'))
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist/css'))
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist/js'))
@@ -38,11 +57,15 @@ app.use('/jsonviewer', express.static(__dirname + '/node_modules/jquery.json-vie
 
 app.use('/draggable', express.static(__dirname + '/node_modules/@shopify/draggable/lib'))
 
+global.appPort = 3000;
+global.appName = "VideoWall"
+
 app.use('/', controllerRouter);
 app.use('/bookmark', bookmarkRouter);
 app.use('/client', clientRouter);
+app.use('/layout', layoutRouter);
 
-// app.locals.Sortable = require('sortablejs');
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

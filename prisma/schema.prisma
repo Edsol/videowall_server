@@ -23,6 +23,13 @@ model Bookmark {
   id      Int      @id @default(autoincrement())
   url     String?
   clients Client[]
+  Layout  Layout[]
 
   @@map("bookmark")
+}
+
+model Layout {
+  id        Int        @id @default(autoincrement())
+  name      String
+  bookmarks Bookmark[]
 }

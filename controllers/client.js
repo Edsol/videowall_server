@@ -1,4 +1,5 @@
 const nmap = require('node-nmap');
+const axios = require('axios');
 
 const clientModel = require("../models/client");
 const bookmarkModel = require("../models/bookmark");
@@ -13,47 +14,89 @@ exports.delete = async function (req, res) {
     res.redirect('/client')
 }
 
+exports.pingHost = async (ip, port) => {
+    var Telnet = require('telnet-client')
+    var connection = new Telnet()
+
+    return new Promise(function (resolve, reject) {
+        var params = {
+            host: ip,
+            port: port,
+            shellPrompt: '/ # ', // or negotiationMandatory: false
+            timeout: 1500,
+            // removeEcho: 4
+        }
+
+        connection.connect(params)
+            .then(function (prompt) {
+                console.log('prompt', prompt)
+                connection.exec(cmd)
+                    .then(function (res) {
+                        // console.log('promises result:', res)
+                        resolve(true)
+                    })
+            }, function (error) {
+                resolve(false)
+            })
+            .catch(function (error) {
+                resolve(false)
+            })
+    })
+}
+
+exports.networkScan = async (network_class) => {
+    if (network_class === undefined) {
+        return [];
+    }
+
+    return new Promise(async (resolve, reject) => {
+        // var nmapscan = new nmap.QuickScan(network_class);
+        var nmapscan = new nmap.NmapScan(network_class, '-sn');
+        nmapscan.on('complete', async function (data) {
+            var list = [];
+            for (const element of data) {
+                // if (element.vendor === 'Raspberry Pi Trading' || element.vendor === 'Raspberry Pi Foundation') {
+                //     list.push(element)
+                // }
+            }
+            resolve(list)
+        });
+        nmapscan.on('error', function (error) {
+            reject(error)
+        });
+
+        nmapscan.startScan();
+    })
+}
+
 exports.findNewClient = async (req, res) => {
     console.time('find new devices');
 
-    //TODO: 1746ms
     const arp = require('@network-utils/arp-lookup');
-    // var result = await arp.fromPrefix('b8:27:eb')
-    // console.log('result', result)
-    // result = await arp.fromPrefix('dc:a6:32')
-    // console.log('result', result)
-    // console.timeEnd('find new devices');
-    //TODO: 886.098ms
     var devices = await arp.getTable();
+
+    var clientPort = global.appPort || 3000;
     var finded = [];
     for (const device of devices) {
-        var regex_1 = new RegExp('^' + 'b8:27:eb', 'i');
-        var regex_2 = new RegExp('^' + 'dc:a6:32', 'i');
-        if ((regex_1.test(device.mac) || regex_2.test(device.mac)) && await clientModel.exists({ mac: device.mac }) === false) {
-            finded.push(device);
-            await clientModel.create(device);
-        }
+        axios.get(`http://${device.ip}:${clientPort}/status`)
+            .then(async response => {
+                finded.push(device);
+                await clientModel.create(device);
+            })
+            .catch(error => {
+                // console.log('error')
+            })
+
+        // Find only raspberry divices
+
+        // var regex_1 = new RegExp('^' + 'b8:27:eb', 'i');
+        // var regex_2 = new RegExp('^' + 'dc:a6:32', 'i');
+        // if ((regex_1.test(device.mac) || regex_2.test(device.mac)) && await clientModel.exists({ mac: device.mac }) === false) {
+        //     finded.push(device);
+        //     await clientModel.create(device);
+        // }
     }
     console.timeEnd('find new devices');
-
-    //TODO: 1100.558ms
-    // const find = require('local-devices');
-    // find('192.168.1.0/24', true).then(async devices => {
-    //     var finded = [];
-    //     for (const device of devices) {
-    //         var regex_1 = new RegExp('^' + 'b8:27:eb', 'i');
-    //         var regex_2 = new RegExp('^' + 'dc:a6:32', 'i');
-    //         if ((regex_1.test(device.mac) || regex_2.test(device.mac)) && await clientModel.exists({ mac: device.mac }) === false) {
-    //             finded.push(device);
-    //             await clientModel.create(device);
-    //         }
-
-    //     }
-    //     console.timeEnd('find new devices');
-    //     console.log('devices finded', finded)
-    //     res.json(true);
-    // })
-
 
     //TODO: 16681.268ms
     // network_class = "192.168.1.0/24"
@@ -68,29 +111,6 @@ exports.findNewClient = async (req, res) => {
     //     }
     // }
     res.json(true);
-}
-
-exports.networkScan = async (req, res) => {
-    if (network_class === undefined) {
-        return [];
-    }
-    return new Promise(async (resolve, reject) => {
-        var nmapscan = new nmap.QuickScan(network_class);
-        nmapscan.on('complete', async function (data) {
-            var list = [];
-            for (const element of data) {
-                if (element.vendor === 'Raspberry Pi Trading' || element.vendor === 'Raspberry Pi Foundation') {
-                    list.push(element)
-                }
-            }
-            resolve(list)
-        });
-        nmapscan.on('error', function (error) {
-            reject(error)
-        });
-
-        nmapscan.startScan();
-    })
 }
 
 exports.favoriteBookmarks = async (req, res) => {

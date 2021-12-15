@@ -4,6 +4,7 @@
       <div class="col-lg-3 col-sm-12 remote-client-item BlockLayout isDropzone" data-ipaddress="<%- client.ip %>" data-id="<%- client.id %>">
         <div class="row border" style="margin-left: 0px; margin-bottom: 15px">
           <div class="col-lg-6 col-sm-12 p-0">
+            <span class='clientId'><%- client.id %></span>
             <img src="<%- client.screenshotPath === '' ? '/images/no_image.png' : client.screenshotPath %>" class='img-fluid cursor-pointer screen_image <%- client.screenshotPath === '' ? '' : 'device-image' %>' title="Click to open preview image">
           </div>
           <div class="col-lg-6 col-sm-12">
@@ -18,7 +19,7 @@
               </div>
             </div>
 
-            <%- include('dropdown/tools')%> 
+            <%- include('dropdown/tools',{client:client})%> 
             <%- include('dropdown/bookmarks',{bookmarks:client.bookmarks,client:client})%> 
           </div>
         </div>

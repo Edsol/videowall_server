@@ -1,4 +1,4 @@
-<%- include('../template/header',{title: 'PiWall controller'})%> 
+<%- include('../template/header',{title: global.appName +' controller'})%> 
 <%- include('../template/navbar',{active:'controller'}) %>
 
 <div class='row'>
@@ -6,7 +6,10 @@
     <button id='sidebarCollapse' class='btn btn-sm btn-primary mt-2 ml-5'>Show bookmarks</button>
   </div>
   <div class="col-auto">
-    <%- include('broadcastDropdown') %> 
+    <%- include('dropdown/broadcastDropdown') %> 
+  </div>
+  <div class="col-auto">
+    <%- include('dropdown/layoutsDropdown') %> 
   </div>
 </div>
 
@@ -23,7 +26,6 @@
     <%- include('components/clientList',{clients: clients})%> 
   </div>
 </div>
-
 
 <script>
   $(document).ready((event) =>{
@@ -231,5 +233,14 @@
     border-left: 2px solid black;
     height: 800px;
     margin-left: -2px;
+  }
+
+  .clientId{
+    position: absolute;
+    background: white;
+    padding: 2px;
+    color: #373737;
+    border: 1px solid black;
+    min-width: 25px;
   }
 </style>

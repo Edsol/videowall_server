@@ -1,0 +1,16 @@
+<table class="table">
+	<thead>
+		<th>Id</th>
+		<th>name</th>
+		<th></th>
+	</thead>
+	<tbody>
+		<% layouts.forEach(layout => { %>
+			<tr>
+					<td><%- layout.id %></td>
+					<td><%- layout.name %></td>
+					<td></td>
+			</tr>
+		<% }) %> 
+	</tbody>
+</table>

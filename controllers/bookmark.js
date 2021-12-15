@@ -17,9 +17,8 @@ exports.save = async function (req, res, next) {
     } else {
 
         const response = await bookmarkModel.create(req.body);
-        console.log('form valid', req.body, response)
         if (response) {
-            res.render('bookmark/add', { saved: true })
+            res.render('bookmark/add')
         }
     }
 }

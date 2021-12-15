@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-1">
-    <a class="navbar-brand" href="#"> PiWall</a>
+    <a class="navbar-brand" href="#"><%- global.appName %></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -13,6 +13,9 @@
         </li>
         <li class="nav-item <%- active === 'bookmark' ? 'active' : '' %>">
           <a class="nav-link" href="/Bookmark">Bookmarks</a>
+        </li>
+        <li class="nav-item <%- active === 'layout' ? 'active' : '' %>">
+          <a class="nav-link" href="/Layout">Layouts</a>
         </li>
       </ul>
     </div>

@@ -1,0 +1,74 @@
+<%- include('../template/header',{title: global.appName +' controller'})%> 
+<%- include('../template/navbar',{active:'layout'}) %>
+
+<div class="page-content">
+    <div class="row">
+        <div class="col-auto">
+            <div class='form-group'>
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" required>
+            </div>
+        </div>
+        <div class="col-auto">
+            <select name="rows" id="rowsNumber">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+            X
+            <select name="columns" id="columnsNumber">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button id='generateGrid' class='btn btn-sm btn-primary'>Generate</button>
+        </div>
+    </div>
+    <hr>
+    <div class="row h-100">
+        <div class="col-2 bg-primary"></div>
+        <div class="col-10 bg-info">
+            <div class="" id="grid"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+$('#generateGrid').on('click',event =>{
+    var rows = parseInt($('#rowsNumber').val());
+    var columns = parseInt($('#columnsNumber').val());
+
+    var grid = createGrid(rows,columns)
+    $('#grid').append(grid);
+})
+
+function createGrid(rows = 0,columns = 0){
+    $('#gridTable').remove();
+    var grid = el('table.table#gridTable');
+    for(var r=0; r < rows; r++){
+        var row = el('tr');
+        for(var c=0; c < columns; c++){
+            $(row).append(el('td',c))
+        }
+        $(grid).append(row);
+    }
+    
+    return grid;
+}
+</script>

@@ -1,0 +1,8 @@
+<%- include('../template/header',{title: global.appName +' controller'})%> 
+<%- include('../template/navbar',{active:'layout'}) %>
+
+<div class="page-content">
+    <a href="Layout/add" class='btn btn-sm btn-primary'>Add</a>
+    <hr>
+    <%- include('components/layoutList',{layouts: layouts})%> 
+</div>

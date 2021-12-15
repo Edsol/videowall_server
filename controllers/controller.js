@@ -12,12 +12,14 @@ var networkInterfaces = os.networkInterfaces();
 
 exports.index = async (req, res) => {
     var clients = await ClientModel.getList();
-    // clients = await ClientModel.fillHostname(clients);
     var bookmarks = await BookmarkModel.getList();
 
+    await req.flash('info', 'Flash is back!');
+    // const messages = await req.consumeFlash('info');
     res.render('controller/index', {
         clients: clients,
-        bookmarks: bookmarks
+        bookmarks: bookmarks,
+        // messages
     });
 }
 
