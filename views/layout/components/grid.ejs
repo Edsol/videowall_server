@@ -1,0 +1,57 @@
+<div class="BlockLayout" id="grid"></div>
+
+<script>
+    $('#generateGrid').on('click',event =>{
+        var rows = parseInt($('#rowsNumber').val());
+        var columns = parseInt($('#columnsNumber').val());
+    
+        var grid = createGrid(rows,columns)
+        $('#grid').append(grid);
+    })
+    
+    function createGrid(rows = 0,columns = 0){
+        $('#gridTable').remove();
+        var grid = el('table.table.table-borderless.align-middle#gridTable');
+        for(var r=0; r < rows; r++){
+            var row = el('tr',{'data-row':r});
+            for(var c=0; c < columns; c++){
+                $(row).append(
+                    el('td',{'data-col':c},
+                        el('div.isDropzone.border',
+                            el('span.gridPlaceHolder.text-center.fw-lighter.no-select','Drag here to assing client')
+                        )
+                    )
+                )
+            }
+            $(grid).append(row);
+        }
+        
+        return grid;
+    }
+</script>
+
+<style>
+    #gridList .isDropzone{
+        height: 200px;
+        padding: 0px;
+    }
+    #gridList .isDraggable{
+        height: 100%;
+        border: 2px solid black;
+        z-index: 1000;
+        position: relative;
+        background: white;
+        top: -20px;
+    }
+    #gridList .isDraggable .clientId{
+        top: 10%;
+        font-size: 7rem;
+    }
+    
+    #gridList .gridPlaceHolder{
+        z-index: 999;
+        display: block;
+        position: relative;
+        top: 40%;
+    }
+</style>

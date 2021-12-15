@@ -175,10 +175,6 @@
     });
   }
 
-  function successNotification(message){
-    new AWN().success(message)
-  }
-
   function simpleGet(action,callback = null){
     axios.get(action)
     .then((response) =>{

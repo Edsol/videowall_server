@@ -13,3 +13,9 @@ a {
 .cursor-pointer {
   cursor: pointer;
 }
+
+.no-select {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}

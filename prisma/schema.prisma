@@ -16,6 +16,7 @@ model Client {
   screenshotPath String     @default("")
   bookmarks      Bookmark[]
 
+  LayoutColumn LayoutColumn[]
   @@map("client")
 }
 
@@ -23,13 +24,25 @@ model Bookmark {
   id      Int      @id @default(autoincrement())
   url     String?
   clients Client[]
-  Layout  Layout[]
 
   @@map("bookmark")
 }
 
 model Layout {
-  id        Int        @id @default(autoincrement())
-  name      String
-  bookmarks Bookmark[]
+  id   Int         @id @default(autoincrement())
+  name String
+  rows LayoutRow[]
+}
+
+model LayoutRow {
+  id     Int            @id @default(autoincrement())
+  layout Layout[]
+  colums LayoutColumn[]
+}
+
+model LayoutColumn {
+  id       Int         @id @default(autoincrement())
+  clientId Int
+  client   Client      @relation(fields: [clientId], references: [id])
+  rows     LayoutRow[]
 }

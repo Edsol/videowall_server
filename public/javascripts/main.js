@@ -13,3 +13,11 @@ function confirmDialog(title, message, callback) {
         callback: callback
     });
 }
+
+function successNotification(message) {
+    new AWN().success(message)
+}
+
+function alertNotification(message) {
+    new AWN().alert(message)
+}

@@ -2,14 +2,16 @@
 <%- include('../template/navbar',{active:'layout'}) %>
 
 <div class="page-content">
-    <div class="row">
+    <div class='row'>
         <div class="col-auto">
-            <div class='form-group'>
-                <label for="name">Name</label>
-                <input type="text" name="name" id="name" required>
-            </div>
+            <button id='saveLayout' class='btn btn-sm btn-primary mt-4'>Save</button>
         </div>
-        <div class="col-auto">
+        <div class="col-10">
+            <label for="layoutName">Name</label>
+            <input type="text" name="layoutName" id="layoutName" class="form-control" maxlength="30" style="width: 200px;">
+        </div>
+
+        <div class='col-auto mt-4'>
             <select name="rows" id="rowsNumber">
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -35,40 +37,81 @@
                 <option value="9">9</option>
                 <option value="10">10</option>
             </select>
-        </div>
-        <div class="col-auto">
             <button id='generateGrid' class='btn btn-sm btn-primary'>Generate</button>
         </div>
+    
     </div>
+
     <hr>
     <div class="row h-100">
-        <div class="col-2 bg-primary"></div>
-        <div class="col-10 bg-info">
-            <div class="" id="grid"></div>
+        <div id="clientList" class="col-2 border">
+            <%- include('components/clientList') %> 
+        </div>
+        <div id="gridList" class="col-10 border">
+            <%- include('components/grid') %> 
         </div>
     </div>
 </div>
 
 <script>
-$('#generateGrid').on('click',event =>{
-    var rows = parseInt($('#rowsNumber').val());
-    var columns = parseInt($('#columnsNumber').val());
 
-    var grid = createGrid(rows,columns)
-    $('#grid').append(grid);
-})
+const containers = document.querySelectorAll('.BlockLayout');
 
-function createGrid(rows = 0,columns = 0){
-    $('#gridTable').remove();
-    var grid = el('table.table#gridTable');
-    for(var r=0; r < rows; r++){
-        var row = el('tr');
-        for(var c=0; c < columns; c++){
-            $(row).append(el('td',c))
-        }
-        $(grid).append(row);
-    }
+var deviceDroppedId = null;
+var overContainer = null;
+
+const droppable = new Draggable.Droppable(containers, {
+    draggable: '.isDraggable',
+    dropzone: '.isDropzone',
+    mirror: {
+        constrainDimensions: true,
+    },
+});
+
+$('#saveLayout').on('click',event =>{
+    var layoutName = $("#layoutName").val()
     
-    return grid;
-}
+    if(layoutName === ''){
+        alertNotification('No layout name')
+        return ;
+    }
+
+    if($('#gridTable').length === 0){
+        alertNotification('No grid layout has been created')
+        return ;
+    }
+
+    try{
+        $('#gridTable td').each((index,td) =>{
+            if($(td).find('.client').length === 0){
+                alertNotification('all boxes must contain a client')
+                throw 'Break';
+            }
+        })
+    } catch(e){
+        return ;
+    }
+
+    var saveGrid = new Array($('#gridTable tr').length);
+    $('#gridTable tr').each((index,tr) =>{
+        var row_id = tr.dataset.row;
+        var row = new Array($(tr).find('td').length);
+
+        $(tr).find('td').each((index,td) =>{
+            var col_id = td.dataset.col;
+            var client_id = $(td).find('.client').data('clientid');
+
+            row[col_id] = client_id;
+        })
+        saveGrid[index] = row;
+    })
+
+    axios.post('/Layout/saveLayout',{
+        name: layoutName, 
+        data: saveGrid
+    })
+    .then(response =>{
+        console.log(response)
+    })
+})
 </script>
