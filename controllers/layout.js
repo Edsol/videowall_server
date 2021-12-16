@@ -21,11 +21,6 @@ exports.saveLayout = async (req, res) => {
     var layoutName = req.body.name;
     var data = req.body.data;
 
-    for (var row of data) {
-        console.log(row)
-        for (var id of row) {
-            console.log(id)
-        }
-    }
+    LayoutModel.create(layoutName, data);
     res.json(true)
 }

@@ -35,14 +35,18 @@ model Layout {
 }
 
 model LayoutRow {
-  id     Int            @id @default(autoincrement())
-  layout Layout[]
-  colums LayoutColumn[]
+  id       Int            @id @default(autoincrement())
+  position Int
+  layout   Layout         @relation(fields: [layoutId], references: [id])
+  layoutId Int
+  columns  LayoutColumn[]
 }
 
 model LayoutColumn {
-  id       Int         @id @default(autoincrement())
+  id       Int       @id @default(autoincrement())
+  position Int
+  rowId    Int
+  row      LayoutRow @relation(fields: [rowId], references: [id])
   clientId Int
-  client   Client      @relation(fields: [clientId], references: [id])
-  rows     LayoutRow[]
+  client   Client    @relation(fields: [clientId], references: [id])
 }
