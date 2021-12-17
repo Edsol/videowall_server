@@ -1,0 +1,58 @@
+<div id="modalId" class="modal" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Open webpage</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+
+			<div class="modal-body">
+				<input type="hidden" id="clientIdForBrowser" name="client_id">
+				<label for="urlForBrowser">Url:</label>
+				<input type="url" name="url" id="urlForBrowser" placeholder="specify url" class="w-100">
+
+				<label for="diplayForBrowser">Display:</label>
+				<select name="display" id="diplayForBrowser" class="w-100">
+					<option value="1">Display 1</option>
+					<option value="2">Display 2</option>
+				</select>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button id="openurl" type="button" class="btn btn-primary">Open</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+var urlModalElement = document.getElementById('modalId');
+var urlModal = new bootstrap.Modal(urlModalElement)
+
+urlModalElement.addEventListener('show.bs.modal', function (event) {
+	console.log(event)
+	var client_id = event.relatedTarget.dataset.clientId;
+	$('#clientIdForBrowser').val(client_id);
+})
+
+$('#openurl').on('click', event =>{
+	var displayNumber = $('#diplayForBrowser').val();
+	var url = $('#urlForBrowser').val();
+	var clientId = $('#clientIdForBrowser').val();
+
+	if(urlIsValid(url) === false){
+		alert("Invalid url");
+		return;
+	}
+	
+
+	notifier.asyncBlock(
+		axios.post('/openUrl',{id: clientId,url:url,display: displayNumber}),
+		resp => {
+			urlModal.hide(),
+			notifier.success(`the remote device has been rebooted`)
+		}
+	);
+})
+</script>

@@ -44,30 +44,30 @@ exports.pingHost = async (ip, port) => {
     })
 }
 
-exports.networkScan = async (network_class) => {
-    if (network_class === undefined) {
-        return [];
-    }
+// exports.networkScan = async (network_class) => {
+//     if (network_class === undefined) {
+//         return [];
+//     }
 
-    return new Promise(async (resolve, reject) => {
-        // var nmapscan = new nmap.QuickScan(network_class);
-        var nmapscan = new nmap.NmapScan(network_class, '-sn');
-        nmapscan.on('complete', async function (data) {
-            var list = [];
-            for (const element of data) {
-                // if (element.vendor === 'Raspberry Pi Trading' || element.vendor === 'Raspberry Pi Foundation') {
-                //     list.push(element)
-                // }
-            }
-            resolve(list)
-        });
-        nmapscan.on('error', function (error) {
-            reject(error)
-        });
+//     return new Promise(async (resolve, reject) => {
+//         // var nmapscan = new nmap.QuickScan(network_class);
+//         var nmapscan = new nmap.NmapScan(network_class, '-sn');
+//         nmapscan.on('complete', async function (data) {
+//             var list = [];
+//             for (const element of data) {
+//                 // if (element.vendor === 'Raspberry Pi Trading' || element.vendor === 'Raspberry Pi Foundation') {
+//                 //     list.push(element)
+//                 // }
+//             }
+//             resolve(list)
+//         });
+//         nmapscan.on('error', function (error) {
+//             reject(error)
+//         });
 
-        nmapscan.startScan();
-    })
-}
+//         nmapscan.startScan();
+//     })
+// }
 
 exports.findNewClient = async (req, res) => {
     console.time('find new devices');
@@ -80,11 +80,17 @@ exports.findNewClient = async (req, res) => {
     for (const device of devices) {
         axios.get(`http://${device.ip}:${clientPort}/status`)
             .then(async response => {
+                console.log('Device response', device.ip)
+                var displayData = await axios.get(`http://${device.ip}:${clientPort}/getMonitors`);
+                var hostnameData = await axios.get(`http://${device.ip}:${clientPort}/hostname`);
+
+                device.displayNumber = Object.keys(displayData.data).length;
+                device.hostname = hostnameData.data;
                 finded.push(device);
                 await clientModel.create(device);
             })
             .catch(error => {
-                // console.log('error')
+                // console.log('error', device.ip)
             })
 
         // Find only raspberry divices

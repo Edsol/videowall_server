@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { PrismaClient } = require('@prisma/client')
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 class Client {
@@ -53,6 +53,7 @@ class Client {
 				hostname: args.hostname,
 				ip: args.ip,
 				mac: args.mac,
+				displayNumber: args.displayNumber,
 				alias: ""
 			}
 		})
@@ -193,13 +194,14 @@ class Client {
 	 * @param  {} url
 	 * @param  {} ip
 	 */
-	async openUrl(url, ip) {
+	async openUrl(url, ip, display = 0) {
 		var ip_address = ip !== undefined ? ip : this.ip;
 		if (ip_address === undefined) {
 			return false;
 		}
-		return axios.post(`http://${ip_address}:${this.#port}` + '/run', {
-			url: url
+		return axios.post(`http://${ip_address}:${this.#port}` + '/openUrl', {
+			url: url,
+			display: display
 		})
 			.then(response => {
 				return response.data

@@ -1,18 +1,13 @@
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient();
+const Table = require('./table');
 
-class Layout {
-	constructor() { }
+class Layout extends Table {
+	tableName = 'layout';
 
-	static async getList() {
-		return await prisma.layout.findMany({
-			include: {
-				rows: true
-			}
-		});
+	constructor() {
+		super();
 	}
 
-	static async create(name, data) {
+	async create(name, data) {
 		var rows = [];
 
 		for (var [row_id, row] of data.entries()) {
@@ -39,28 +34,6 @@ class Layout {
 				}
 			}
 		})
-
-		// return await prisma.layout.create({
-		// 	data: {
-		// 		name: name,
-		// 		rows: {
-		// 			create: [
-		// 				{
-		// 					position: 2,
-		// 					columns: {
-		// 						create: [
-		// 							{
-		// 								position: 3,
-		// 								clientId: 1
-		// 							}
-		// 						]
-		// 					}
-		// 				}
-		// 			],
-
-		// 		}
-		// 	}
-		// })
 	}
 }
 

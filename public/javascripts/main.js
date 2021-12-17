@@ -21,3 +21,12 @@ function successNotification(message) {
 function alertNotification(message) {
     new AWN().alert(message)
 }
+
+function urlIsValid(url) {
+    var regex = new RegExp(/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi);
+    if (url.match(regex) === null) {
+        return false;
+    } else {
+        return true;
+    }
+}

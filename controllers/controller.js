@@ -28,8 +28,7 @@ exports.index = async (req, res) => {
 */
 exports.openUrl = async (req, res) => {
     var client = await ClientModel.get(req.body.id, null, true);
-    console.log('openUrl client', client)
-    var response = client.openUrl(req.body.url, client.ip_address)
+    var response = client.openUrl(req.body.url, client.ip_address, req.body.display || 0)
     res.json(response)
 }
 

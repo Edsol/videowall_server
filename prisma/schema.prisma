@@ -14,6 +14,7 @@ model Client {
   hostname       String?    @unique
   alias          String     @default("")
   screenshotPath String     @default("")
+  displayNumber  Int        @default(0)
   bookmarks      Bookmark[]
 
   LayoutColumn LayoutColumn[]
