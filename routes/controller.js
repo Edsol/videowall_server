@@ -6,7 +6,7 @@ var controller_controller = require('../controllers/controller');
 // router.get('/index', controller_controller.getClients);
 router.get('/', controller_controller.index);
 router.post('/openUrl', controller_controller.openUrl)
-router.get('/openBookmark/:bookmark_id/:client_id', controller_controller.openBookmark)
+router.get('/openBookmark/:bookmark_id/:client_id/:display_id', controller_controller.openBookmark)
 router.get('/getScreenshot/:id', controller_controller.getScreenshot);
 router.get('/reboot/:id', controller_controller.reboot);
 router.get('/closeRemoteBrowser/:id', controller_controller.closeRemoteBrowser);

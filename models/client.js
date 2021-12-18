@@ -1,8 +1,10 @@
 const axios = require('axios');
 const { PrismaClient } = require('@prisma/client');
+const Table = require('./table');
 const prisma = new PrismaClient();
 
-class Client {
+class Client extends Table {
+	tableName = 'client';
 	#port = 3000;
 	hostname = null;
 	/**
@@ -10,56 +12,49 @@ class Client {
 	 */
 
 	constructor(args) {
+		super();
 		if (args) {
 			this.id = args.id
 			this.ip = args.ip
 			this.mac = args.mac
+			this.bookmarks = args.bookmarks
 		}
 	}
 
-	static async getList() {
-		return await prisma.client.findMany({
-			include: {
-				bookmarks: true
-			}
-		})
+	// async getList() {
+	// 	return await prisma.client.findMany({
+	// 		include: {
+	// 			bookmarks: true
+	// 		}
+	// 	})
+	// }
+
+	async get(id, includes) {
+		var client = await super.get(id, includes)
+		return new Client(client);
 	}
 
-	static async get(id, includes = null, return_object = true) {
-		var client = await prisma.client.findFirst({
-			where: {
-				id: parseInt(id)
-			},
-			include: includes
-		});
+	// async exists(args = {}) {
+	// 	var count = await prisma.client.count({
+	// 		where: args
+	// 	})
 
-		if (return_object) {
-			return new Client(client);
-		}
-		return client;
-	}
+	// 	return count === 0 ? false : true;
+	// }
 
-	static async exists(args = {}) {
-		var count = await prisma.client.count({
-			where: args
-		})
+	// async create(args) {
+	// 	return await prisma.client.create({
+	// 		data: {
+	// 			hostname: args.hostname,
+	// 			ip: args.ip,
+	// 			mac: args.mac,
+	// 			displayNumber: args.displayNumber,
+	// 			alias: ""
+	// 		}
+	// 	})
+	// }
 
-		return count === 0 ? false : true;
-	}
-
-	static async create(args) {
-		return await prisma.client.create({
-			data: {
-				hostname: args.hostname,
-				ip: args.ip,
-				mac: args.mac,
-				displayNumber: args.displayNumber,
-				alias: ""
-			}
-		})
-	}
-
-	static async updateByMac(id, data) {
+	async updateByMac(id, data) {
 		return await prisma.client.update({
 			where: {
 				id: id
@@ -68,25 +63,25 @@ class Client {
 		});
 	}
 
-	async setField(id, field, value) {
-		return await prisma.client.update({
-			where: {
-				id: parseInt(id)
-			},
-			data: {
-				[field]: value
-			}
-		});
-	}
+	// async setField(id, field, value) {
+	// 	return await prisma.client.update({
+	// 		where: {
+	// 			id: parseInt(id)
+	// 		},
+	// 		data: {
+	// 			[field]: value
+	// 		}
+	// 	});
+	// }
 
-	static async find(args, includes) {
-		return await prisma.client.findFirst({
-			where: args,
-			include: includes
-		})
-	}
+	// async find(args, includes) {
+	// 	return await prisma.client.findFirst({
+	// 		where: args,
+	// 		include: includes
+	// 	})
+	// }
 
-	static async disconnectAllBookmark(id) {
+	async disconnectAllBookmark(id) {
 		return await prisma.client.update({
 			where: {
 				id: parseInt(id)
@@ -99,7 +94,7 @@ class Client {
 		})
 	}
 
-	static async connnectBookmark(id, bookmark_ids) {
+	async connnectBookmark(id, bookmark_ids) {
 		return await prisma.client.update({
 			where: {
 				id: parseInt(id)
@@ -112,7 +107,7 @@ class Client {
 		})
 	}
 
-	static async fillHostname() {
+	async fillHostname() {
 		var clients = await prisma.client.findMany({
 			where: {
 				hostname: null
@@ -199,6 +194,7 @@ class Client {
 		if (ip_address === undefined) {
 			return false;
 		}
+		console.log('client openUrl', `http://${ip_address}:${this.#port}` + '/openUrl')
 		return axios.post(`http://${ip_address}:${this.#port}` + '/openUrl', {
 			url: url,
 			display: display

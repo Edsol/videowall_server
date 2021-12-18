@@ -12,12 +12,18 @@ class Table {
 		return prisma[this.tableName].findMany(args);
 	}
 
-	async get(id) {
-		return await prisma[this.tableName].findFirst({
+	async get(id, includes = null) {
+		var options = {
 			where: {
-				id: id
-			}
-		});
+				id: parseInt(id)
+			},
+		};
+
+		if (includes !== null) {
+			options.include = includes;
+		}
+
+		return await prisma[this.tableName].findFirst(options);
 	}
 
 	async exists(where = {}) {
@@ -28,7 +34,7 @@ class Table {
 	async setField(id, field, value) {
 		return await prisma[this.tableName].updateMany({
 			where: {
-				id: id
+				id: parseInt(id)
 			},
 			data: {
 				[field]: value

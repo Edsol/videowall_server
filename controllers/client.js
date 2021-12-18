@@ -1,16 +1,17 @@
-const nmap = require('node-nmap');
 const axios = require('axios');
 
 const clientModel = require("../models/client");
 const bookmarkModel = require("../models/bookmark");
 
+const client = new clientModel();
+
 exports.index = async function (req, res) {
-    var clients = await clientModel.getList();
+    var clients = await client.getList();
     res.render('client/index', { clients: clients });
 }
 
 exports.delete = async function (req, res) {
-    clientModel.delete(req.params.id)
+    client.delete(req.params.id)
     res.redirect('/client')
 }
 
@@ -87,7 +88,7 @@ exports.findNewClient = async (req, res) => {
                 device.displayNumber = Object.keys(displayData.data).length;
                 device.hostname = hostnameData.data;
                 finded.push(device);
-                await clientModel.create(device);
+                await client.create(device);
             })
             .catch(error => {
                 // console.log('error', device.ip)
@@ -97,9 +98,9 @@ exports.findNewClient = async (req, res) => {
 
         // var regex_1 = new RegExp('^' + 'b8:27:eb', 'i');
         // var regex_2 = new RegExp('^' + 'dc:a6:32', 'i');
-        // if ((regex_1.test(device.mac) || regex_2.test(device.mac)) && await clientModel.exists({ mac: device.mac }) === false) {
+        // if ((regex_1.test(device.mac) || regex_2.test(device.mac)) && await client.exists({ mac: device.mac }) === false) {
         //     finded.push(device);
-        //     await clientModel.create(device);
+        //     await client.create(device);
         // }
     }
     console.timeEnd('find new devices');
@@ -111,8 +112,8 @@ exports.findNewClient = async (req, res) => {
     // console.log('Findend devices', list);
 
     // for (const element of list) {
-    //     if (await clientModel.exists({ mac: element.mac }) === false) {
-    //         await clientModel.create(element);
+    //     if (await client.exists({ mac: element.mac }) === false) {
+    //         await client.create(element);
     //         console.log(`One device was added (mac: ${element.mac})`)
     //     }
     // }
@@ -121,18 +122,21 @@ exports.findNewClient = async (req, res) => {
 
 exports.favoriteBookmarks = async (req, res) => {
     var all_bookmarks = await bookmarkModel.getList();
-    var client = await clientModel.get(req.params.id, { bookmarks: true });
 
-    for (var bookmark of client.bookmarks) {
-        all_bookmarks.filter((e, i) => {
-            if (e.id === bookmark.id) {
-                all_bookmarks.splice(i, 1);
-            }
-        })
+    var clientObj = await client.get(req.params.id, { bookmarks: true });
+    console.log(clientObj)
+    if (clientObj.bookmarks !== undefined) {
+        for (var bookmark of clientObj.bookmarks) {
+            all_bookmarks.filter((e, i) => {
+                if (e.id === bookmark.id) {
+                    all_bookmarks.splice(i, 1);
+                }
+            })
+        }
     }
 
     res.render('client/favoriteBookmarks', {
-        thisClient: client,
+        thisClient: clientObj,
         bookmarks: all_bookmarks
     })
 }
@@ -141,7 +145,7 @@ exports.saveFavoriteBookmarks = async (req, res) => {
     var client_id = req.params.id;
     var bookmarks = [];
 
-    await clientModel.disconnectAllBookmark(client_id);
+    await client.disconnectAllBookmark(client_id);
     if (typeof req.body.bookmark === 'string') {
         bookmarks = [{ id: parseInt(req.body.bookmark) }];
     } else if (typeof req.body.bookmark === 'object') {
@@ -150,7 +154,7 @@ exports.saveFavoriteBookmarks = async (req, res) => {
         })
     }
 
-    await clientModel.connnectBookmark(client_id, bookmarks)
+    await client.connnectBookmark(client_id, bookmarks)
     res.redirect('/client/favoriteBookmarks/' + req.params.id)
 }
 
@@ -160,6 +164,6 @@ exports.displayNumber = (req, res) => {
 }
 
 exports.fillsAllHostname = async (req, res) => {
-    await clientModel.fillHostname();
+    await client.fillHostname();
     res.json(true)
 }

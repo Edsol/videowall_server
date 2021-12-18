@@ -1,0 +1,43 @@
+<div id="openBookmarkModal" class="modal" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Open bookmark</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+
+			<div class="modal-body">
+				<label for="displayForBookmark">Display:</label>
+				<select name="display" id="displayForBookmark" class="w-100">
+					<option value="1">Display 1</option>
+					<option value="2">Display 2</option>
+				</select>
+			</div>
+
+			<div class="modal-footer">
+                <button id="openbookmark" type="button" class="btn btn-primary">Open</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+    var bookmarkModalElement = document.getElementById('openBookmarkModal');
+    var bookmarkModal = new bootstrap.Modal(bookmarkModalElement)
+
+    var bookmark_id;
+    var client_id;
+    var display_id;
+
+    bookmarkModalElement.addEventListener('show.bs.modal', function (event) {
+        bookmark_id = event.relatedTarget.dataset.bookmarkId;
+        client_id = event.relatedTarget.dataset.clientId;
+        display_id = document.getElementById('displayForBookmark').value;      
+    })
+
+    $('#openbookmark').on('click', event =>{
+        simpleGet(`openBookmark/${bookmark_id}/${client_id}/${display_id}`)
+        bookmarkModal.hide();
+    })
+</script>

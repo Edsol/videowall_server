@@ -23,9 +23,8 @@
                     <td><%- client.mac %></td>
                     <td><%- client.displayNumber %></td>
                     <td>
-                        <a href="/client/favoriteBookmarks/<%- client.id %>"><i class="fas fa-bookmark cursor-pointer set-bookmark text-black" title="set favorite boomarks"></i></a>
-                        <i class="far fa-trash-alt cursor-pointer delete-client" title='delete client' data-client-id="<%- client.id %>"></i>
-                      </td>
+                      <%- include('dropdown/tools',{client:client})%>
+                    </td>
                 </tr>
                 <% }) %> 
         </tbody>

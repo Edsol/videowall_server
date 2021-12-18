@@ -1,0 +1,20 @@
+<span class="dropdown">
+	<button class="btn btn-sm btn-secondary bg-white text-dark dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+		<i class="fas fa-ellipsis-v"></i>
+	</button>
+	<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+		<li>
+			<a class='dropdown-item' href="/client/favoriteBookmarks/<%- client.id %>">
+				<i class="fas fa-bookmark cursor-pointer set-bookmark text-black" title="set favorite boomarks"></i>
+				Set favorite bookmarks
+			</a>
+		</li>
+		<li>
+			<a class='dropdown-item' href="#">
+				<i class="far fa-trash-alt cursor-pointer delete-client" title='delete client' data-client-id="<%- client.id %>"></i>
+				Delete
+			</a>
+			
+		</li>
+	</ul>
+</span>

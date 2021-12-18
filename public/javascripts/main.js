@@ -30,3 +30,15 @@ function urlIsValid(url) {
         return true;
     }
 }
+
+function simpleGet(action, callback = null) {
+    axios.get(action)
+        .then((response) => {
+            if (response.status === 200) {
+                successNotification();
+                if (callback) {
+                    callback(response)
+                }
+            }
+        })
+}

@@ -28,6 +28,7 @@
 </div>
 
 <%- include('./modal/open_url'); %>
+<%- include('./modal/open_bookmark'); %>
 
 <script>
   $(document).ready((event) =>{
@@ -129,7 +130,10 @@
                 id: element.dataset.id,
                 url:url
                 }),
-              resp => notifier.success(`${resp.data.length} posts has been loaded`),
+              resp => {
+                console.log('resp',resp)
+                notifier.success(`${resp.data.length} posts has been loaded`)
+              }
             );
           }
         }
@@ -175,18 +179,6 @@
       backdrop: true,
       viewed() {},
     });
-  }
-
-  function simpleGet(action,callback = null){
-    axios.get(action)
-    .then((response) =>{
-      if(response.status === 200){
-        successNotification();
-        if(callback){
-          callback(response)
-        }
-      }
-    })
   }
 
   function openBookmarkToClient(bookmark_id,client_id){

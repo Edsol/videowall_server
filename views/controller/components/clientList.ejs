@@ -10,17 +10,12 @@
           <div class="col-lg-6 col-sm-12">
             <div class="hostname"><%- client.hostname %></div>
             <hr class='m-0'>
-            <div class='row'>
-              <div class="col-lg-12 col-md-12 font-weight-bold ip_address">
-                <b>IP Address:</b> <%- client.ip %>
-              </div>
-              <div class="col-lg-12 col-md-12 mac_address">
-                <b>MAC:</b><%- client.mac %>
-              </div>
-            </div>
 
-            <%- include('dropdown/tools',{client:client})%> 
+            <i class="fas fa-info" data-bs-toggle="tooltip" data-bs-html="true" title="<em><b>IP Address:</b> <%- client.ip %></em> <b>MAC:</b><%- client.mac %>"></i>
+            <i class="fas fa-paper-plane cursor-pointer" data-bs-toggle="modal" data-bs-target="#modalId" data-client-id="<%- client.id %>" title='Open specific url'></i>
+             
             <%- include('dropdown/bookmarks',{bookmarks:client.bookmarks,client:client})%> 
+            <%- include('dropdown/tools',{client:client})%>
           </div>
         </div>
       </div>

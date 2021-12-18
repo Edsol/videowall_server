@@ -31,7 +31,6 @@ var urlModalElement = document.getElementById('modalId');
 var urlModal = new bootstrap.Modal(urlModalElement)
 
 urlModalElement.addEventListener('show.bs.modal', function (event) {
-	console.log(event)
 	var client_id = event.relatedTarget.dataset.clientId;
 	$('#clientIdForBrowser').val(client_id);
 })

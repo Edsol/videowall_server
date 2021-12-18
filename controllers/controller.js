@@ -1,17 +1,23 @@
 const ClientModel = require('../models/client');
 const BookmarkModel = require('../models/bookmark');
 
+const client = new ClientModel();
+
 var os = require('os');
 var networkInterfaces = os.networkInterfaces();
 
 
 // exports.getClients = async (req, res) => {
-//     var list = await ClientModel.getList();
+//     var list = await client.getList();
 //     res.json(list);
 // }
 
 exports.index = async (req, res) => {
-    var clients = await ClientModel.getList();
+    var clients = await client.getList({
+        include: {
+            bookmarks: true
+        }
+    });
     var bookmarks = await BookmarkModel.getList();
 
     await req.flash('info', 'Flash is back!');
@@ -27,15 +33,20 @@ exports.index = async (req, res) => {
 * open page in remote browser
 */
 exports.openUrl = async (req, res) => {
-    var client = await ClientModel.get(req.body.id, null, true);
-    var response = client.openUrl(req.body.url, client.ip_address, req.body.display || 0)
+    console.log(req.body)
+    var clientObj = await client.get(req.body.id);
+    // console.log(clientObj)
+    // var client = await client.get(req.body.id);
+    var response = await clientObj.openUrl(req.body.url, client.ip_address, req.body.display || 1)
+    console.log('openUrl (req.body.url) response', response)
     res.json(response)
 }
 
 exports.openBookmark = async (req, res) => {
-    var client = await ClientModel.get(req.params.client_id, null, true);
+    var clientObj = await client.get(req.params.client_id, null, true);
     var bookmark = await BookmarkModel.get(req.params.bookmark_id);
-    var response = client.openUrl(bookmark.url, client.ip_address)
+    console.log('req.params.display', req.params.display)
+    var response = clientObj.openUrl(bookmark.url, client.ip_address, req.params.display || 1)
     res.json(response)
 }
 
@@ -44,10 +55,10 @@ exports.openBookmark = async (req, res) => {
 * take screenshot of remote client screen
 */
 exports.getScreenshot = async (req, res) => {
-    var client = await ClientModel.get(req.params.id, null, true);
+    var client = await client.get(req.params.id, null, true);
     var base64_image = await client.getScreenshot();
     var base64Data = base64_image.replace(/^data:image\/png;base64,/, "");
-    // console.log('base64Data', base64Data)
+
     var file_path = "screenshot/" + client.mac.replace(/:/g, '_') + ".png";
     require("fs").writeFile('./public/' + file_path, base64Data, 'base64', function (err) {
         if (err) {
@@ -64,7 +75,7 @@ exports.getScreenshot = async (req, res) => {
 * reboot remote device
 */
 exports.reboot = async (req, res) => {
-    var client = await ClientModel.get(req.params.id);
+    var client = await client.get(req.params.id);
     res.json(await client.reboot());
 };
 
@@ -72,26 +83,26 @@ exports.reboot = async (req, res) => {
 * close all browser windows to remote client
 */
 exports.closeRemoteBrowser = async (req, res) => {
-    var client = await ClientModel.get(req.params.id);
+    var client = await client.get(req.params.id);
     res.json(await client.closeAllBrowser())
 };
 
 exports.listClient = async (req, res) => {
-    res.json(await ClientModel.getList());
+    res.json(await client.getList());
 }
 
 exports.osd = async (req, res) => {
-    var client = await ClientModel.get(req.params.id);
+    var client = await client.get(req.params.id);
     res.json(await client.showOsd(networkInterfaces.enp2s0[0].address + ":3000/client/displayNumber/" + client.id));
 }
 
 exports.getConfig = async (req, res) => {
-    var client = await ClientModel.get(req.params.id);
+    var client = await client.get(req.params.id);
     res.json(await client.getConfig());
 }
 
 exports.broadcast = async (req, res) => {
-    var clientList = await ClientModel.getList();
+    var clientList = await client.getList();
     for (var client of clientList) {
         var clientObject = new ClientModel(client);
         switch (req.params.action) {

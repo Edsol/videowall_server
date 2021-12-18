@@ -5,7 +5,7 @@
 	<ul class="dropdown-menu" aria-labelledby="dropdownBookmarks">
 			<% bookmarks.forEach(bookmark => { %>
 					<li>
-							<a class="dropdown-item" href="#" title="open url" onclick="openBookmarkToClient('<%- bookmark.id %>','<%- client.id %>')">
+							<a class="dropdown-item" href="#" title="open url" data-bs-toggle='modal' data-bs-target="#openBookmarkModal" data-bookmark-id="<%- bookmark.id %>" data-client-id="<%- client.id %>">
 									<%- bookmark.url %> 
 							</a>
 					</li>
