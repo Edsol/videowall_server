@@ -1,4 +1,5 @@
 const bookmarkModel = require("../models/bookmark");
+const Url = require('url');
 const { validationResult } = require('express-validator');
 
 exports.index = async function (req, res) {
@@ -15,7 +16,7 @@ exports.save = async function (req, res, next) {
     if (!errors.isEmpty()) {
         res.render('bookmark/add', { errors: errors.mapped() })
     } else {
-
+        // var url = new URL(req.body.url)
         const response = await bookmarkModel.create(req.body);
         if (response) {
             res.render('bookmark/add')

@@ -21,38 +21,11 @@ class Client extends Table {
 		}
 	}
 
-	// async getList() {
-	// 	return await prisma.client.findMany({
-	// 		include: {
-	// 			bookmarks: true
-	// 		}
-	// 	})
-	// }
-
 	async get(id, includes) {
 		var client = await super.get(id, includes)
 		return new Client(client);
 	}
 
-	// async exists(args = {}) {
-	// 	var count = await prisma.client.count({
-	// 		where: args
-	// 	})
-
-	// 	return count === 0 ? false : true;
-	// }
-
-	// async create(args) {
-	// 	return await prisma.client.create({
-	// 		data: {
-	// 			hostname: args.hostname,
-	// 			ip: args.ip,
-	// 			mac: args.mac,
-	// 			displayNumber: args.displayNumber,
-	// 			alias: ""
-	// 		}
-	// 	})
-	// }
 
 	async updateByMac(id, data) {
 		return await prisma.client.update({
@@ -62,24 +35,6 @@ class Client extends Table {
 			data: data
 		});
 	}
-
-	// async setField(id, field, value) {
-	// 	return await prisma.client.update({
-	// 		where: {
-	// 			id: parseInt(id)
-	// 		},
-	// 		data: {
-	// 			[field]: value
-	// 		}
-	// 	});
-	// }
-
-	// async find(args, includes) {
-	// 	return await prisma.client.findFirst({
-	// 		where: args,
-	// 		include: includes
-	// 	})
-	// }
 
 	async disconnectAllBookmark(id) {
 		return await prisma.client.update({
@@ -204,8 +159,8 @@ class Client extends Table {
 			})
 	}
 
-	async getScreenshot(base64 = true) {
-		return await this.doRequest('screenshot/' + base64);
+	async getScreenshot() {
+		return await this.doRequest('screenshot');
 	}
 
 	async closeAllBrowser() {
@@ -226,12 +181,12 @@ class Client extends Table {
 		return await this.doRequest('getConfig');
 	}
 
-	static async delete(id) {
-		return await prisma.client.delete({
-			where: {
-				id: parseInt(id)
-			}
-		})
+	async getMonitors() {
+		return await this.doRequest('getMonitors')
+	}
+
+	async setPlaceByPort(second, place, main) {
+		return this.doRequest(`setPlaceByPort/${place}/${second}/${main}`)
 	}
 
 }

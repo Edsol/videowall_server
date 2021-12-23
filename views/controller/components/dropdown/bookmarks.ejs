@@ -1,14 +1,16 @@
 <span class="dropdown">
-	<button class="btn btn-sm btn-secondary  bg-dark dropdown-toggle" type="button" id="dropdownBookmarks" data-bs-toggle="dropdown" aria-expanded="false">
-			<i class="far fa-bookmark"></i>
+	<button class="btn btn-sm btn-secondary bg-white text-black dropdown-toggle border-0" type="button" id="dropdownBookmarks" data-bs-toggle="dropdown" aria-expanded="false">
+		<i class="far fa-bookmark"></i>
 	</button>
-	<ul class="dropdown-menu" aria-labelledby="dropdownBookmarks">
+	<% if(bookmarks){ %>
+		<ul class="dropdown-menu" aria-labelledby="dropdownBookmarks">
 			<% bookmarks.forEach(bookmark => { %>
-					<li>
-							<a class="dropdown-item" href="#" title="open url" data-bs-toggle='modal' data-bs-target="#openBookmarkModal" data-bookmark-id="<%- bookmark.id %>" data-client-id="<%- client.id %>">
-									<%- bookmark.url %> 
-							</a>
-					</li>
+				<li>
+					<a class="dropdown-item" href="#" title="open url" data-bs-toggle='modal' data-bs-target="#openBookmarkModal" data-bookmark-id="<%- bookmark.id %>" data-client-id="<%- client.id %>">
+						<%- bookmark.url %> 
+					</a>
+				</li>
 			<% }) %> 
-	</ul>
+		</ul>
+	<% } %> 
 </span>

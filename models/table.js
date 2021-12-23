@@ -42,6 +42,14 @@ class Table {
 		})
 	}
 
+	async delete(id) {
+		return await prisma[this.tableName].delete({
+			where: {
+				id: parseInt(id)
+			}
+		})
+	}
+
 	async deleteAll(where = {}, dataSet = {}) {
 		return await prisma[this.tableName].updateMany({
 			where: where,

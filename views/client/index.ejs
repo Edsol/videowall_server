@@ -9,6 +9,7 @@
     
     <table class="table">
         <thead>
+            <th>#</th>
             <th>Ip address</th>
             <th>Hostname</th>
             <th>Mac</th>
@@ -18,13 +19,14 @@
         <tbody>
             <% clients.forEach(client => { %>
                 <tr>
-                    <td><%- client.ip %></td>
-                    <td><%- client.hostname %></td>
-                    <td><%- client.mac %></td>
-                    <td><%- client.displayNumber %></td>
-                    <td>
-                      <%- include('dropdown/tools',{client:client})%>
-                    </td>
+                  <td><%- client.id %></td>
+                  <td><%- client.ip %></td>
+                  <td><%- client.hostname %></td>
+                  <td><%- client.mac %></td>
+                  <td><%- Object.keys(client.displays).length || 0 %></td>
+                  <td>
+                    <%- include('dropdown/tools',{client:client})%>
+                  </td>
                 </tr>
                 <% }) %> 
         </tbody>
@@ -35,12 +37,32 @@
 <script>
 $(document).on('click','.delete-client',(event) =>{
 	var id = event.currentTarget.dataset.clientId
-	
 	confirmDialog('delete client','do you want to proceed to remove the client?',(response) =>{
 		if(response){
 			window.location.href = '/client/delete/'+id
 		}
 	})
+})
+
+$(document).on('click',".config-remote-device",event =>{
+  var id = event.currentTarget.dataset.id
+  
+  if(id === undefined){
+    console.log('No id')
+    return;
+  }
+
+  console.log(id)
+  axios.get('getConfig/'+id)
+  .then(response =>{
+    bootbox.dialog({
+      size: 'extra-large',
+      message: '<pre id="json-renderer"></pre>',
+      closeButton: true
+    });
+
+    $('#json-renderer').jsonViewer(response.data);
+  })
 })
 
 

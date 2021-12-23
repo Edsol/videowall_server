@@ -11,14 +11,12 @@ model Client {
   id             Int        @id @default(autoincrement())
   ip             String
   mac            String?    @unique
-  hostname       String?    @unique
-  alias          String     @default("")
+  hostname       String?
   screenshotPath String     @default("")
-  displayNumber  Int        @default(0)
   bookmarks      Bookmark[]
 
   LayoutColumn LayoutColumn[]
-  @@map("client")
+  displays     Display[]
 }
 
 model Bookmark {
@@ -27,6 +25,20 @@ model Bookmark {
   clients Client[]
 
   @@map("bookmark")
+}
+
+model Display {
+  id       Int     @id @default(autoincrement())
+  port     String
+  index    Int
+  primary  Boolean
+  width    Int
+  height   Int
+  left     Int
+  top      Int
+  position String
+  clientId Int
+  client   Client  @relation(fields: [clientId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
 model Layout {
@@ -38,7 +50,7 @@ model Layout {
 model LayoutRow {
   id       Int            @id @default(autoincrement())
   position Int
-  layout   Layout         @relation(fields: [layoutId], references: [id])
+  layout   Layout         @relation(fields: [layoutId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   layoutId Int
   columns  LayoutColumn[]
 }
@@ -47,7 +59,7 @@ model LayoutColumn {
   id       Int       @id @default(autoincrement())
   position Int
   rowId    Int
-  row      LayoutRow @relation(fields: [rowId], references: [id])
+  row      LayoutRow @relation(fields: [rowId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   clientId Int
   client   Client    @relation(fields: [clientId], references: [id])
 }

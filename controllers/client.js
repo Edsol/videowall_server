@@ -3,10 +3,16 @@ const axios = require('axios');
 const clientModel = require("../models/client");
 const bookmarkModel = require("../models/bookmark");
 
+var clientPort = global.appPort || 3000;
+
 const client = new clientModel();
 
 exports.index = async function (req, res) {
-    var clients = await client.getList();
+    var clients = await client.getList({
+        include: {
+            displays: true
+        }
+    });
     res.render('client/index', { clients: clients });
 }
 
@@ -45,30 +51,28 @@ exports.pingHost = async (ip, port) => {
     })
 }
 
-// exports.networkScan = async (network_class) => {
-//     if (network_class === undefined) {
-//         return [];
-//     }
+async function parseClient(device) {
+    var deviceParsed = {
+        ip: device.ip,
+        mac: device.mac,
+        displays: {
+            create: []
+        }
+    };
 
-//     return new Promise(async (resolve, reject) => {
-//         // var nmapscan = new nmap.QuickScan(network_class);
-//         var nmapscan = new nmap.NmapScan(network_class, '-sn');
-//         nmapscan.on('complete', async function (data) {
-//             var list = [];
-//             for (const element of data) {
-//                 // if (element.vendor === 'Raspberry Pi Trading' || element.vendor === 'Raspberry Pi Foundation') {
-//                 //     list.push(element)
-//                 // }
-//             }
-//             resolve(list)
-//         });
-//         nmapscan.on('error', function (error) {
-//             reject(error)
-//         });
+    var hostnameData = await axios.get(`http://${device.ip}:${clientPort}/hostname`);
+    deviceParsed.hostname = hostnameData.data.replace(/\s+/g, ' ').trim();
 
-//         nmapscan.startScan();
-//     })
-// }
+    var displayData = await axios.get(`http://${device.ip}:${clientPort}/getMonitors`);
+
+    displayData.data.forEach((element, index) => {
+        element.index = element.id;
+        delete element.id;
+        deviceParsed.displays.create.push(element);
+    })
+
+    return deviceParsed
+}
 
 exports.findNewClient = async (req, res) => {
     console.time('find new devices');
@@ -76,47 +80,19 @@ exports.findNewClient = async (req, res) => {
     const arp = require('@network-utils/arp-lookup');
     var devices = await arp.getTable();
 
-    var clientPort = global.appPort || 3000;
     var finded = [];
     for (const device of devices) {
         axios.get(`http://${device.ip}:${clientPort}/status`)
             .then(async response => {
                 console.log('Device response', device.ip)
-                var displayData = await axios.get(`http://${device.ip}:${clientPort}/getMonitors`);
-                var hostnameData = await axios.get(`http://${device.ip}:${clientPort}/hostname`);
+                var deviceParsed = await parseClient(device)
 
-                device.displayNumber = Object.keys(displayData.data).length;
-                device.hostname = hostnameData.data;
-                finded.push(device);
-                await client.create(device);
+                var saved = await client.create({ data: deviceParsed });
+                finded.push(saved);
             })
-            .catch(error => {
-                // console.log('error', device.ip)
-            })
-
-        // Find only raspberry divices
-
-        // var regex_1 = new RegExp('^' + 'b8:27:eb', 'i');
-        // var regex_2 = new RegExp('^' + 'dc:a6:32', 'i');
-        // if ((regex_1.test(device.mac) || regex_2.test(device.mac)) && await client.exists({ mac: device.mac }) === false) {
-        //     finded.push(device);
-        //     await client.create(device);
-        // }
+            .catch(error => { })
     }
     console.timeEnd('find new devices');
-
-    //TODO: 16681.268ms
-    // network_class = "192.168.1.0/24"
-    // console.log(`Find new device in ${network_class} network`)
-    // var list = await this.networkScan(network_class + "/24");
-    // console.log('Findend devices', list);
-
-    // for (const element of list) {
-    //     if (await client.exists({ mac: element.mac }) === false) {
-    //         await client.create(element);
-    //         console.log(`One device was added (mac: ${element.mac})`)
-    //     }
-    // }
     res.json(true);
 }
 
@@ -159,8 +135,24 @@ exports.saveFavoriteBookmarks = async (req, res) => {
 }
 
 exports.displayNumber = (req, res) => {
-    console.log(req.params.number)
     res.render('displayPage', { number: req.params.number })
+}
+
+exports.displayPosition = async (req, res) => {
+    var displayObj = await client.get(req.params.id);
+
+    res.render('client/displayPosition', {
+        clientId: req.params.id,
+        display: displayObj,
+        monitors: await displayObj.getMonitors()
+    })
+}
+
+exports.saveDisplayPosition = async (req, res) => {
+    var clientObj = await client.get(req.params.id);
+    var response = await clientObj.setPlaceByPort(req.body.second, req.body.place, req.body.main);
+    console.log('response', response)
+    res.json(true);
 }
 
 exports.fillsAllHostname = async (req, res) => {

@@ -13,4 +13,7 @@ router.post('/favoriteBookmarks/:id', client_controller.saveFavoriteBookmarks);
 router.get('/displayNumber/:number', client_controller.displayNumber)
 
 router.get('/fillsAllHostname', client_controller.fillsAllHostname)
+
+router.get('/DisplayPosition/:id', client_controller.displayPosition);
+router.post('/saveDisplayPosition/:id', client_controller.saveDisplayPosition);
 module.exports = router;

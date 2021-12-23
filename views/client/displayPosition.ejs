@@ -1,0 +1,155 @@
+<%- include('../template/header',{title: 'PiWall - Client bookmarks'})%> 
+<%- include('../template/navbar',{active:'client'}) %>
+
+<div class="page-content">
+	<button id='save' class='btn btn-sm btn-success'>Save</button>
+	<hr>
+	<div class="row">
+    <div class="col-lg-3 col-sm-4">
+			<h5>List of monitors</h5>
+			<div id="displayList" class="border-right BlockLayout">
+				<% monitors.forEach((monitor) => { %>
+						<div class="isDropzone">
+								<div class="client cursor-pointer no-select isDraggable" data-clientId='<%- monitor.id %>'>
+										<div class='display' data-display-id="<%- monitor.id %>" data-display-port="<%- monitor.port %>"><%- monitor.port %></div>
+								</div>
+						</div>
+				<% }) %> 
+		</div>
+    </div>
+    <div class="col-lg-9 col-sm-8">
+			<h5>Client favorite bookmarks</h5>
+			<form id='form' method="POST">
+				<div class="list-group border BlockLayout">
+					<table id="grid" class="table table-borderless">
+						<tbody>
+							<tr>
+								<td>
+									<div id="aboveDropzone" data-position="above" class="isDropzone border">
+										<span class="text-center fw-lighter no-select">Above</span>
+									</div>
+								</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>
+									<div id="mainDropzone" data-position="main" class="isDropzone border">
+										<span class="text-center fw-lighter no-select">Main</span>
+									</div>
+								</td>
+								<td>
+									<div id="rightDropzone" data-position="right" class="isDropzone border">
+										<span class="text-center fw-lighter no-select">Right</span>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div id="beloveDropzone" data-position="belove" class="isDropzone border">
+										<span class="text-center fw-lighter no-select">Under</span>
+									</div>
+								</td>
+								<td></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</form>
+    	</div>
+	</div>
+</div>
+
+<script>
+	const containers = document.querySelectorAll('.BlockLayout');
+
+	var deviceDroppedId = null;
+	var overContainer = null;
+	
+	const droppable = new Draggable.Droppable(containers, {
+		draggable: '.isDraggable',
+		dropzone: '.isDropzone',
+		mirror: {
+			constrainDimensions: true,
+		},
+	});
+
+	$('#save').on('click',event =>{
+		var main_dropzone = $('#mainDropzone');
+		var above_dropzone = $('#aboveDropzone');
+		var right_dropzone = $('#rightDropzone');
+		var belove_dropzone = $('#beloveDropzone');
+
+		if(main_dropzone.find('.display').length === 0){
+			alert("insert at least one display in the main position")
+			return;
+		}
+
+		var main_display_element = main_dropzone.find('.display').get(0)
+		var main_display_port = main_display_element.dataset.displayPort;
+
+		var second_display_element = null;
+		var second_dropzone = null;
+		
+		if(above_dropzone.find('.display').length !== 0){
+			second_dropzone = above_dropzone;	
+		}
+		if(right_dropzone.find('.display').length !== 0){
+			second_dropzone = right_dropzone;	
+		}
+		if(belove_dropzone.find('.display').length !== 0){
+			second_dropzone = belove_dropzone;	
+		}
+
+		var second_display_element = second_dropzone.find('.display').get(0);
+		second_display_port = second_display_element.dataset.displayPort;
+		var second_display_position = $(second_display_element).closest('.isDropzone').data('position');
+		
+		console.log(main_display_port)
+		console.log(second_display_position)
+		console.log(second_display_port)
+
+		axios.post('/client/saveDisplayPosition/<%- clientId %>',{
+			main: main_display_port, 
+			second: second_display_port,
+			place: second_display_position
+	})
+	.then(response =>{
+		console.log(response)
+			location.reload()
+	})
+	})
+	
+</script>
+
+<style>
+	#displayList .display{
+			height: 100px;
+			border: solid 1px black;
+			background: white;
+	}
+
+	#grid .isDropzone{
+        height: 200px;
+        padding: 0px;
+  }
+
+	#grid .display{
+		height: 100%;
+		border: 2px solid black;
+		z-index: 1000;
+		position: relative;
+		background: white;
+		top: -20px;
+	}
+
+	#displayList .isDropzone{
+		min-height: 100px;
+		border: 2px solid black;
+		background-image: repeating-linear-gradient(-45deg,#fff,#fff 40%,currentColor 0,currentColor 50%,#fff 0);
+		background-size: .8rem .8rem;
+		color: #212529;
+		transition: color .12s cubic-bezier(.64,0,.35,1);
+		margin-bottom: 5px;
+		margin-top: 5px;
+	}
+</style>

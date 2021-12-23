@@ -1,5 +1,5 @@
 <span class="dropdown">
-	<button class="btn btn-sm btn-secondary bg-white text-dark dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+	<button class="btn btn-sm bg-white text-dark dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
 		<i class="fas fa-ellipsis-v"></i>
 	</button>
 	<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
@@ -10,11 +10,31 @@
 			</a>
 		</li>
 		<li>
-			<a class='dropdown-item' href="#">
-				<i class="far fa-trash-alt cursor-pointer delete-client" title='delete client' data-client-id="<%- client.id %>"></i>
+			<a class='dropdown-item' href="/client/displayPosition/<%- client.id %>">
+				<i class="fas fa-border-all cursor-pointer" title="set display position"></i>
+				Set display position
+			</a>
+		</li>
+		<li>
+			<a class="dropdown-item open-terminal" href="https://<%- client.ip %>:4200" target="_blank" title="open ssh connection">
+			  <i class="fas fa-terminal cursor-pointer"></i> Open ssh connection
+			</a>
+		  </li>
+		  <li>
+			<a class="dropdown-item reboot-remote-device" href="#" title="reboot remote device">
+			  <i class="fas fa-power-off cursor-pointer"></i> Reboot device
+			</a>
+		  </li>
+		  <li>
+			<a class="dropdown-item config-remote-device" href="#" title="show config from remote device" data-id="<%- client.id %> ">
+			  <i class="fas fa-info cursor-pointer"></i> Show config
+			</a>
+		  </li>
+		  <li>
+			<a class='dropdown-item delete-client' href="#"  data-client-id="<%- client.id %>">
+				<i class="far fa-trash-alt cursor-pointer" title='delete client'></i>
 				Delete
 			</a>
-			
 		</li>
 	</ul>
 </span>

@@ -4,39 +4,36 @@
       <div class="col-lg-3 col-sm-12 remote-client-item BlockLayout isDropzone" data-ipaddress="<%- client.ip %>" data-id="<%- client.id %>">
         <div class="row border" style="margin-left: 0px; margin-bottom: 15px">
           <div class="col-lg-6 col-sm-12 p-0">
-            <span class='clientId'><%- client.id %></span>
+            <span class='clientId cursor-pointer text-center' title="Display ID"><%- client.id %></span>
             <img src="<%- client.screenshotPath === '' ? '/images/no_image.png' : client.screenshotPath %>" class='img-fluid cursor-pointer screen_image <%- client.screenshotPath === '' ? '' : 'device-image' %>' title="Click to open preview image">
           </div>
           <div class="col-lg-6 col-sm-12">
-            <div class="hostname"><%- client.hostname %></div>
+            <div class='flex'>
+              <div class="hostname d-inline"><%- client.hostname %></div>
+              <div>
+                Ip address:
+                <small class=''><%- client.ip %></small>
+              </div>
+            </div>
             <hr class='m-0'>
 
-            <i class="fas fa-info" data-bs-toggle="tooltip" data-bs-html="true" title="<em><b>IP Address:</b> <%- client.ip %></em> <b>MAC:</b><%- client.mac %>"></i>
-            <i class="fas fa-paper-plane cursor-pointer" data-bs-toggle="modal" data-bs-target="#modalId" data-client-id="<%- client.id %>" title='Open specific url'></i>
-             
-            <%- include('dropdown/bookmarks',{bookmarks:client.bookmarks,client:client})%> 
-            <%- include('dropdown/tools',{client:client})%>
+            <div class="">
+              <div>
+                <label for="" class="fw-bold">Bookmarks</label>
+                <div class="float-end">
+                  <%- include('dropdown/bookmarks',{bookmarks:client.bookmarks,client:client})%> 
+                </div>
+              </div>
+              <div class="mt-2">
+                <label for="" class="fw-bold">Tools</label>
+                <div class="float-end">
+                  <%- include('dropdown/tools',{client:client})%>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     <% }) %>
   </div>
 </div>
-
-<script>
-$(document).on('click',".config-remote-device",event =>{
-  var main_element = event.currentTarget.closest('.remote-client-item');
-  var id = main_element.dataset.id
-  
-  axios.get('getConfig/'+id)
-  .then(response =>{
-    bootbox.dialog({
-      size: 'extra-large',
-      message: '<pre id="json-renderer"></pre>',
-      closeButton: true
-    });
-
-    $('#json-renderer').jsonViewer(response.data);
-  })
-})
-</script>
