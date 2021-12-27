@@ -12,7 +12,10 @@
               <div class="hostname d-inline"><%- client.hostname %></div>
               <div>
                 Ip address:
-                <small class=''><%- client.ip %></small>
+                <small class=''>
+                  <%- client.ip %>
+                  <a href="http://<%- client.ip %>:3000" target="_blank"><i class="fas fa-external-link-alt"></i></a>
+                </small>
               </div>
             </div>
             <hr class='m-0'>
