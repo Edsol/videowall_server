@@ -63,11 +63,7 @@ class Client extends Table {
 	}
 
 	async fillHostname() {
-		var clients = await prisma.client.findMany({
-			where: {
-				hostname: null
-			}
-		})
+		var clients = await this.getList();
 
 		var updated = 0;
 
