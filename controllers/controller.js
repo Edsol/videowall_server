@@ -46,8 +46,7 @@ exports.openBookmark = async (req, res) => {
     var clientObj = await client.get(req.params.client_id, null, true);
     var bookmark = await BookmarkModel.get(req.params.bookmark_id);
     console.log("Open bookmark url", bookmark.url)
-    console.log('req.params.display', req.params.display)
-    // var response = clientObj.openUrl(bookmark.url, client.ip_address, req.params.display || 1)
+    var response = clientObj.openUrl(bookmark.url, client.ip_address, req.params.display_id || 1)
     res.json(response)
 }
 
