@@ -26,6 +26,8 @@
     var bookmarkModalElement = document.getElementById('openBookmarkModal');
     var bookmarkModal = new bootstrap.Modal(bookmarkModalElement)
 
+	var dropdown = document.getElementById('displayForBookmark');
+
     var bookmark_id;
     var client_id;
     var display_id;
@@ -33,10 +35,11 @@
     bookmarkModalElement.addEventListener('show.bs.modal', function (event) {
         bookmark_id = event.relatedTarget.dataset.bookmarkId;
         client_id = event.relatedTarget.dataset.clientId;
-        display_id = document.getElementById('displayForBookmark').value;      
+		dropdown.value = -1;
     })
 
     $('#openbookmark').on('click', event =>{
+		display_id = dropdown.value;
         simpleGet(`openBookmark/${bookmark_id}/${client_id}/${display_id}`)
         bookmarkModal.hide();
     })
